@@ -179,7 +179,7 @@ export interface Slider {
   title: string
   image_path: string
   alt_text: string
-  order: number
+  order_index: number
   created_at: string
   updated_at: string
 }

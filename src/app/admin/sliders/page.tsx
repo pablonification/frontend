@@ -1,45 +1,71 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Plus, Edit, Trash2, Eye, ArrowUp, ArrowDown } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Plus, Edit, Trash2, Eye, ArrowUp, ArrowDown, AlertCircle } from 'lucide-react'
 import Card from '../../../components/ui/Card'
 import Button from '../../../components/ui/Button'
 import DataTable from '../../../components/shared/DataTable'
 import Badge from '../../../components/ui/Badge'
+import LoadingSpinner from '../../../components/ui/LoadingSpinner'
+import { useApp } from '../../../contexts/AppContext'
+import { api, endpoints, Slider } from '../../../lib/api'
 
 export default function AdminSliders() {
-  const [sliders] = useState([
-    {
-      id: 1,
-      title: 'Selamat Datang di Lab Kimia Dasar',
-      image_path: '/images/hero-1.jpg',
-      alt_text: 'Laboratorium Kimia Dasar',
-      order_index: 1,
-      is_active: true
-    },
-    {
-      id: 2,
-      title: 'Praktikum Kimia Dasar',
-      image_path: '/images/hero-2.jpg',
-      alt_text: 'Praktikum Kimia',
-      order_index: 2,
-      is_active: true
-    },
-    {
-      id: 3,
-      title: 'Pengumuman Terbaru',
-      image_path: '/images/hero-3.jpg',
-      alt_text: 'Pengumuman Lab',
-      order_index: 3,
-      is_active: false
+  const { addNotification } = useApp()
+  const [sliders, setSliders] = useState<Slider[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchSliders = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const response = await api.get<Slider[]>(endpoints.sliders.list)
+        setSliders(response.data || [])
+        
+      } catch (err) {
+        console.error('Error fetching sliders:', err)
+        setError('Failed to load sliders')
+        addNotification({
+          type: 'error',
+          message: 'Failed to load sliders'
+        })
+      } finally {
+        setLoading(false)
+      }
     }
-  ])
+
+    fetchSliders()
+  }, [addNotification])
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this slider?')) {
+      return
+    }
+
+    try {
+      await api.delete(endpoints.sliders.delete(id))
+      setSliders(prev => prev.filter(slider => slider.id !== id))
+      addNotification({
+        type: 'success',
+        message: 'Slider deleted successfully'
+      })
+    } catch (err) {
+      console.error('Error deleting slider:', err)
+      addNotification({
+        type: 'error',
+        message: 'Failed to delete slider'
+      })
+    }
+  }
 
   const columns = [
     {
       key: 'order_index' as const,
       label: 'Urutan',
-      render: (value: number, item: any) => (
+      render: (value: number, item: Slider) => (
         <div className="flex items-center space-x-2">
           <span className="font-medium text-neutral-900">{value}</span>
           <div className="flex flex-col space-y-1">
@@ -56,7 +82,7 @@ export default function AdminSliders() {
     {
       key: 'title' as const,
       label: 'Judul',
-      render: (value: string, item: any) => (
+      render: (value: string, item: Slider) => (
         <div>
           <p className="font-medium text-neutral-900">{value}</p>
           <p className="text-sm text-neutral-500">{item.alt_text}</p>
@@ -80,18 +106,18 @@ export default function AdminSliders() {
       )
     },
     {
-      key: 'is_active' as const,
+      key: 'created_at' as const,
       label: 'Status',
-      render: (value: boolean) => (
-        <Badge variant={value ? 'success' : 'secondary'}>
-          {value ? 'Aktif' : 'Nonaktif'}
+      render: (value: string) => (
+        <Badge variant="success">
+          Aktif
         </Badge>
       )
     },
     {
       key: 'actions' as const,
       label: 'Aksi',
-      render: (value: any, item: any) => (
+      render: (value: any, item: Slider) => (
         <div className="flex items-center space-x-2">
           <Button variant="ghost" size="sm">
             <Eye className="w-4 h-4" />
@@ -99,7 +125,12 @@ export default function AdminSliders() {
           <Button variant="ghost" size="sm">
             <Edit className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-red-600 hover:text-red-700"
+            onClick={() => handleDelete(item.id)}
+          >
             <Trash2 className="w-4 h-4" />
           </Button>
         </div>
@@ -107,9 +138,27 @@ export default function AdminSliders() {
     }
   ]
 
+  if (loading) {
+    return <LoadingSpinner.Page message="Memuat slider..." />
+  }
+
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="text-center">
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-neutral-900 mb-2">Error Loading Sliders</h2>
+          <p className="text-neutral-600 mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()}>
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <div className="container-custom py-8">
+    <div className="p-8">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-neutral-900 mb-2">
@@ -133,7 +182,6 @@ export default function AdminSliders() {
             totalPages={1}
           />
         </Card>
-      </div>
     </div>
   )
 }

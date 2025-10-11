@@ -1,7 +1,5 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import Header from '../../../components/layout/Header'
-import Footer from '../../../components/layout/Footer'
 import { Calendar, Clock, AlertCircle, Download, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
@@ -223,8 +221,6 @@ export default async function AnnouncementDetailPage({ params }: PageProps) {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   )
 }

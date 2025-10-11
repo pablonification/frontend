@@ -1,6 +1,4 @@
 import { Metadata } from 'next'
-import Header from '../../components/layout/Header'
-import Footer from '../../components/layout/Footer'
 import { Calendar, Clock, AlertCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -187,8 +185,6 @@ export default function PengumumanPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   )
 }

@@ -16,11 +16,13 @@ import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
 import { useApp } from '../../contexts/AppContext'
+import { api, endpoints } from '../../lib/api'
 
 export default function AdminDashboard() {
   const router = useRouter()
   const { addNotification } = useApp()
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [stats, setStats] = useState({
     totalAnnouncements: 0,
     totalFiles: 0,
@@ -30,20 +32,42 @@ export default function AdminDashboard() {
   })
 
   useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => {
-      setLoading(false)
-      setStats({
-        totalAnnouncements: 15,
-        totalFiles: 8,
-        totalSliders: 3,
-        totalModules: 24,
-        totalNilai: 12
-      })
-    }, 1000)
+    const fetchStats = async () => {
+      try {
+        setLoading(true)
+        setError(null)
 
-    return () => clearTimeout(timer)
-  }, [])
+        // Fetch all data in parallel
+        const [announcementsRes, filesRes, slidersRes, modulesRes, nilaiRes] = await Promise.all([
+          api.get(endpoints.announcements.list),
+          api.get(endpoints.files.list),
+          api.get(endpoints.sliders.list),
+          api.get(endpoints.modules.list),
+          api.get(endpoints.nilai.list)
+        ])
+
+        setStats({
+          totalAnnouncements: announcementsRes.data?.length || 0,
+          totalFiles: filesRes.data?.length || 0,
+          totalSliders: slidersRes.data?.length || 0,
+          totalModules: modulesRes.data?.length || 0,
+          totalNilai: nilaiRes.data?.length || 0
+        })
+
+      } catch (err) {
+        console.error('Error fetching dashboard stats:', err)
+        setError('Failed to load dashboard statistics')
+        addNotification({
+          type: 'error',
+          message: 'Failed to load dashboard statistics'
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchStats()
+  }, [addNotification])
 
   const quickActions = [
     {
@@ -87,9 +111,23 @@ export default function AdminDashboard() {
     return <LoadingSpinner.Page message="Memuat dashboard admin..." />
   }
 
+  if (error) {
+    return (
+      <div className="p-8">
+        <div className="text-center">
+          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-neutral-900 mb-2">Error Loading Dashboard</h2>
+          <p className="text-neutral-600 mb-4">{error}</p>
+          <Button onClick={() => window.location.reload()}>
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-neutral-50">
-      <div className="container-custom py-8">
+    <div className="p-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-neutral-900 mb-2">
             Dashboard Admin
@@ -248,7 +286,6 @@ export default function AdminDashboard() {
             </div>
           </div>
         </Card>
-      </div>
     </div>
   )
 }

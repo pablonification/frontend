@@ -1,6 +1,4 @@
 import { Metadata } from 'next'
-import Header from '../../components/layout/Header'
-import Footer from '../../components/layout/Footer'
 import { Users, Target, Award, BookOpen } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -165,8 +163,6 @@ export default function AboutPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   )
 }

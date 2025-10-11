@@ -1,6 +1,4 @@
 import { Metadata } from 'next'
-import Header from '../../components/layout/Header'
-import Footer from '../../components/layout/Footer'
 import { BookOpen, Calendar, Users, Download, FileText } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -230,8 +228,6 @@ export default function PraktikumPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   )
 }

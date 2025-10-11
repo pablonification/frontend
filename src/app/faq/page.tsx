@@ -1,6 +1,4 @@
 import { Metadata } from 'next'
-import Header from '../../components/layout/Header'
-import Footer from '../../components/layout/Footer'
 import { ChevronDown, HelpCircle } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -180,8 +178,6 @@ export default function FAQPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   )
 }

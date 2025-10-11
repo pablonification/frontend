@@ -1,6 +1,4 @@
 import { Metadata } from 'next'
-import Header from '../../components/layout/Header'
-import Footer from '../../components/layout/Footer'
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react'
 
 export const metadata: Metadata = {
@@ -233,8 +231,6 @@ export default function KontakPage() {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   )
 }

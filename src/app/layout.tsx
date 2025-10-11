@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { Manrope } from 'next/font/google'
 import './globals.css'
-import Header from '../components/layout/Header'
-import Footer from '../components/layout/Footer'
+import ConditionalLayout from '../components/layout/ConditionalLayout'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { AppProvider } from '../contexts/AppContext'
 import NotificationSystem from '../components/NotificationSystem'
@@ -36,14 +35,10 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <ErrorBoundary>
           <AppProvider>
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer />
-              <NotificationSystem />
-            </div>
+            <ConditionalLayout>
+              {children}
+            </ConditionalLayout>
+            <NotificationSystem />
           </AppProvider>
         </ErrorBoundary>
       </body>
