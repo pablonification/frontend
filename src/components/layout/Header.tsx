@@ -10,6 +10,7 @@ export default function Header() {
   const navigation = [
     { name: 'Beranda', href: '/' },
     { name: 'Tentang Lab', href: '/about' },
+    { name: 'Virtual Lab', href: '/virtual-lab' },
     { name: 'Praktikum', href: '/praktikum' },
     { name: 'Pengumuman', href: '/pengumuman' },
     { name: 'FAQ', href: '/faq' },
