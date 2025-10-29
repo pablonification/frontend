@@ -2,66 +2,12 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { Calendar, Clock, AlertCircle, Download, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { api, endpoints, Announcement } from '../../../lib/api'
 
-interface Announcement {
-  id: number
-  title: string
-  content: string
-  publishedAt: string
+interface TransformedAnnouncement extends Omit<Announcement, 'is_important' | 'published_at'> {
   isImportant: boolean
-  attachments: string[]
+  publishedAt: string
 }
-
-// Mock data - in real app, this would come from API
-const announcements: Announcement[] = [
-  {
-    id: 1,
-    title: 'Jadwal Praktikum Semester Genap 2024',
-    content: `Jadwal praktikum untuk semester genap 2024 telah tersedia. Silakan cek jadwal masing-masing kelompok dan pastikan kehadiran tepat waktu.
-
-Praktikum akan dimulai pada minggu kedua semester. Pastikan Anda telah menyiapkan modul praktikum dan alat tulis yang diperlukan.
-
-**Jadwal Praktikum:**
-- Kelas A1: Senin, 08:00 - 10:00 (Lab 1)
-- Kelas A2: Senin, 10:00 - 12:00 (Lab 1)
-- Kelas B1: Selasa, 08:00 - 10:00 (Lab 2)
-- Kelas B2: Selasa, 10:00 - 12:00 (Lab 2)
-
-**Catatan Penting:**
-1. Pastikan kehadiran tepat waktu
-2. Bawa modul praktikum yang sudah dicetak
-3. Gunakan alat pelindung diri (APD) yang disediakan
-4. Ikuti protokol kesehatan yang berlaku
-
-Jika ada pertanyaan, silakan hubungi koordinator praktikum.`,
-    publishedAt: '2024-01-15T10:00:00Z',
-    isImportant: true,
-    attachments: ['jadwal-praktikum-2024.pdf']
-  },
-  {
-    id: 2,
-    title: 'Pembagian Kelompok Praktikum',
-    content: `Daftar pembagian kelompok praktikum kimia dasar telah diumumkan. Setiap kelompok terdiri dari 4-5 mahasiswa.
-
-**Informasi Kelompok:**
-- Total kelompok: 16 kelompok
-- Jumlah mahasiswa per kelompok: 4-5 orang
-- Pembagian berdasarkan absensi dan prestasi akademik
-
-**Cara Melihat Kelompok:**
-1. Login ke sistem akademik
-2. Pilih menu "Praktikum"
-3. Lihat informasi kelompok Anda
-
-**Catatan:**
-- Pembagian kelompok bersifat final
-- Tidak ada perubahan kelompok setelah pengumuman
-- Koordinasi dengan anggota kelompok untuk persiapan praktikum`,
-    publishedAt: '2024-01-12T14:30:00Z',
-    isImportant: false,
-    attachments: ['pembagian-kelompok-2024.pdf']
-  }
-]
 
 interface PageProps {
   params: Promise<{
@@ -71,23 +17,53 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
-  const announcement = announcements.find(a => a.id === parseInt(id))
   
-  if (!announcement) {
+  try {
+    const response = await api.get<Announcement>(`/api/announcements/${id}`)
+    const announcement = response.data
+    
+    if (!announcement) {
+      return {
+        title: 'Pengumuman Tidak Ditemukan - Lab Kimia Dasar',
+      }
+    }
+
+    return {
+      title: `${announcement.title} - Lab Kimia Dasar`,
+      description: announcement.content.substring(0, 160) + '...',
+    }
+  } catch (error) {
+    console.error('Error fetching announcement for metadata:', error)
     return {
       title: 'Pengumuman Tidak Ditemukan - Lab Kimia Dasar',
     }
   }
+}
 
-  return {
-    title: `${announcement.title} - Lab Kimia Dasar`,
-    description: announcement.content.substring(0, 160) + '...',
+async function getAnnouncement(id: string): Promise<TransformedAnnouncement | null> {
+  try {
+    const response = await api.get<Announcement>(`/api/announcements/${id}`)
+    const announcement = response.data
+    
+    if (!announcement) {
+      return null
+    }
+    
+    // Transform API response to match component structure
+    return {
+      ...announcement,
+      isImportant: announcement.is_important || false,
+      publishedAt: announcement.published_at
+    }
+  } catch (error) {
+    console.error('Error fetching announcement:', error)
+    return null
   }
 }
 
 export default async function AnnouncementDetailPage({ params }: PageProps) {
   const { id } = await params
-  const announcement = announcements.find(a => a.id === parseInt(id))
+  const announcement = await getAnnouncement(id)
   
   if (!announcement) {
     notFound()

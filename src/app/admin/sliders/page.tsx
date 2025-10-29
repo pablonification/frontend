@@ -30,6 +30,7 @@ export default function AdminSliders() {
         setError('Failed to load sliders')
         addNotification({
           type: 'error',
+          title: 'Error',
           message: 'Failed to load sliders'
         })
       } finally {
@@ -40,7 +41,7 @@ export default function AdminSliders() {
     fetchSliders()
   }, [addNotification])
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string | number) => {
     if (!confirm('Are you sure you want to delete this slider?')) {
       return
     }
@@ -50,12 +51,14 @@ export default function AdminSliders() {
       setSliders(prev => prev.filter(slider => slider.id !== id))
       addNotification({
         type: 'success',
+        title: 'Berhasil',
         message: 'Slider deleted successfully'
       })
     } catch (err) {
       console.error('Error deleting slider:', err)
       addNotification({
         type: 'error',
+        title: 'Error',
         message: 'Failed to delete slider'
       })
     }

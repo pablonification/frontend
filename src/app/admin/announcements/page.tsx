@@ -1,20 +1,27 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Plus, Edit, Trash2, Eye, AlertCircle } from 'lucide-react'
 import Card from '../../../components/ui/Card'
 import Button from '../../../components/ui/Button'
 import DataTable from '../../../components/shared/DataTable'
 import Badge from '../../../components/ui/Badge'
 import LoadingSpinner from '../../../components/ui/LoadingSpinner'
+import Modal from '../../../components/ui/Modal'
+import AnnouncementForm, { AnnouncementFormData } from '../../../components/forms/AnnouncementForm'
 import { useApp } from '../../../contexts/AppContext'
 import { api, endpoints, Announcement } from '../../../lib/api'
 
 export default function AdminAnnouncements() {
+  const router = useRouter()
   const { addNotification } = useApp()
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null)
+  const [formLoading, setFormLoading] = useState(false)
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
@@ -25,12 +32,25 @@ export default function AdminAnnouncements() {
         const response = await api.get<Announcement[]>(endpoints.announcements.list)
         setAnnouncements(response.data || [])
         
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error fetching announcements:', err)
+        
+        // Handle authentication errors
+        if (err.isAuthError) {
+          addNotification({
+            type: 'error',
+            title: 'Session Expired',
+            message: 'Please login again to continue'
+          })
+          router.push('/admin/login')
+          return
+        }
+        
         setError('Failed to load announcements')
         addNotification({
           type: 'error',
-          message: 'Failed to load announcements'
+          title: 'Error',
+          message: err.message || 'Failed to load announcements'
         })
       } finally {
         setLoading(false)
@@ -38,9 +58,9 @@ export default function AdminAnnouncements() {
     }
 
     fetchAnnouncements()
-  }, [addNotification])
+  }, [addNotification, router])
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string | number) => {
     if (!confirm('Are you sure you want to delete this announcement?')) {
       return
     }
@@ -50,15 +70,123 @@ export default function AdminAnnouncements() {
       setAnnouncements(prev => prev.filter(ann => ann.id !== id))
       addNotification({
         type: 'success',
+        title: 'Berhasil',
         message: 'Announcement deleted successfully'
       })
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error deleting announcement:', err)
+      
+      // Handle authentication errors
+      if (err.isAuthError) {
+        addNotification({
+          type: 'error',
+          title: 'Session Expired',
+          message: 'Token tidak valid. Silakan login kembali.'
+        })
+        router.push('/admin/login')
+        return
+      }
+      
       addNotification({
         type: 'error',
-        message: 'Failed to delete announcement'
+        title: 'Error',
+        message: err.message || 'Failed to delete announcement'
       })
     }
+  }
+
+  const handleCreate = () => {
+    setEditingAnnouncement(null)
+    setIsModalOpen(true)
+  }
+
+  const handleEdit = (announcement: Announcement) => {
+    setEditingAnnouncement(announcement)
+    setIsModalOpen(true)
+  }
+
+  const handleFormSubmit = async (data: AnnouncementFormData) => {
+    setFormLoading(true)
+    
+    try {
+      if (editingAnnouncement) {
+        // Update existing announcement
+        const response = await api.put(endpoints.announcements.update(editingAnnouncement.id), {
+          title: data.title,
+          content: data.content,
+          is_important: data.is_important,
+          attachments: data.attachments.map(file => file.name)
+        })
+        
+        setAnnouncements(prev =>
+          prev.map(ann =>
+            ann.id === editingAnnouncement.id
+              ? { ...ann, ...(response.data as any) }
+              : ann
+          )
+        )
+        
+        addNotification({
+          type: 'success',
+          title: 'Berhasil',
+          message: 'Pengumuman berhasil diperbarui'
+        })
+      } else {
+        // Create new announcement
+        const response = await api.post(endpoints.announcements.create, {
+          title: data.title,
+          content: data.content,
+          is_important: data.is_important,
+          attachments: data.attachments.map(file => file.name)
+        })
+        
+        setAnnouncements(prev => [(response.data as any), ...prev])
+        
+        addNotification({
+          type: 'success',
+          title: 'Berhasil',
+          message: 'Pengumuman berhasil dibuat'
+        })
+      }
+      
+      setIsModalOpen(false)
+      setEditingAnnouncement(null)
+    } catch (err: any) {
+      console.error('Error saving announcement:', err)
+      console.error('Error details:', {
+        message: err.message,
+        status: err.status,
+        isAuthError: err.isAuthError,
+        token: localStorage.getItem('auth_token') ? localStorage.getItem('auth_token')?.substring(0, 20) + '...' : 'none'
+      })
+      
+      // Handle authentication errors
+      if (err.isAuthError) {
+        addNotification({
+          type: 'error',
+          title: 'Session Expired',
+          message: err.message || 'Token tidak valid. Silakan login kembali.'
+        })
+        // Wait a bit before redirecting to show the notification
+        setTimeout(() => {
+          router.push('/admin/login')
+        }, 2000)
+        return
+      }
+      
+      addNotification({
+        type: 'error',
+        title: 'Error',
+        message: err.message || 'Gagal menyimpan pengumuman'
+      })
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  const handleModalClose = () => {
+    setIsModalOpen(false)
+    setEditingAnnouncement(null)
   }
 
   const columns = [
@@ -75,33 +203,37 @@ export default function AdminAnnouncements() {
       )
     },
     {
-      key: 'is_important' as const,
+      key: 'published_at' as const,
       label: 'Status',
-      render: (value: boolean, item: Announcement) => (
+      render: (value: string, item: Announcement) => (
         <div className="flex items-center space-x-2">
           <Badge variant="success">
             Dipublikasi
           </Badge>
-          {value && (
+          {(item as any).is_important && (
             <Badge variant="error">Penting</Badge>
           )}
         </div>
       )
     },
     {
-      key: 'actions' as const,
+      key: 'actions' as any,
       label: 'Aksi',
       render: (value: any, item: Announcement) => (
         <div className="flex items-center space-x-2">
           <Button variant="ghost" size="sm">
             <Eye className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="sm">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEdit(item)}
+          >
             <Edit className="w-4 h-4" />
           </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             className="text-red-600 hover:text-red-700"
             onClick={() => handleDelete(item.id)}
           >
@@ -142,7 +274,7 @@ export default function AdminAnnouncements() {
               Buat, edit, dan kelola pengumuman website
             </p>
           </div>
-          <Button>
+          <Button onClick={handleCreate}>
             <Plus className="w-4 h-4 mr-2" />
             Tambah Pengumuman
           </Button>
@@ -156,6 +288,21 @@ export default function AdminAnnouncements() {
             totalPages={1}
           />
         </Card>
+
+        {/* Announcement Form Modal */}
+        <Modal
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          title={editingAnnouncement ? 'Edit Pengumuman' : 'Tambah Pengumuman'}
+          size="lg"
+        >
+          <AnnouncementForm
+            announcement={editingAnnouncement}
+            onSubmit={handleFormSubmit}
+            onCancel={handleModalClose}
+            loading={formLoading}
+          />
+        </Modal>
     </div>
   )
 }

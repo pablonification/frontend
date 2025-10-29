@@ -1,51 +1,119 @@
-import { Metadata } from 'next'
-import { BookOpen, Calendar, Users, Download, FileText } from 'lucide-react'
+'use client'
+
+import { BookOpen, Calendar, Users, Download, FileText, AlertCircle } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
+import LoadingSpinner from '../../components/ui/LoadingSpinner'
+import { useApp } from '../../contexts/AppContext'
+import { api, endpoints, Module, Group } from '../../lib/api'
+import { useState, useEffect } from 'react'
 
-export const metadata: Metadata = {
-  title: 'Praktikum - Lab Kimia Dasar',
-  description: 'Akses modul praktikum, jadwal, dan pembagian kelompok untuk praktikum kimia dasar.',
+// Utility function to format file size
+const formatFileSize = (bytes?: number): string => {
+  if (!bytes) return 'N/A'
+  
+  const sizes = ['Bytes', 'KB', 'MB', 'GB']
+  if (bytes === 0) return '0 Bytes'
+  
+  const i = Math.floor(Math.log(bytes) / Math.log(1024))
+  return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i]
 }
 
 export default function PraktikumPage() {
-  const modules = [
-    {
-      id: 1,
-      title: 'Percobaan 1: Pengenalan Alat dan Bahan',
-      description: 'Mengenal alat-alat laboratorium dan cara penggunaannya yang aman',
-      fileSize: '2.5 MB',
-      downloadCount: 150
-    },
-    {
-      id: 2,
-      title: 'Percobaan 2: Penentuan Massa Jenis',
-      description: 'Menentukan massa jenis berbagai zat dengan metode yang tepat',
-      fileSize: '3.1 MB',
-      downloadCount: 142
-    },
-    {
-      id: 3,
-      title: 'Percobaan 3: Titrasi Asam Basa',
-      description: 'Melakukan titrasi untuk menentukan konsentrasi larutan',
-      fileSize: '2.8 MB',
-      downloadCount: 138
-    },
-    {
-      id: 4,
-      title: 'Percobaan 4: Reaksi Kimia',
-      description: 'Mengamati dan menganalisis berbagai jenis reaksi kimia',
-      fileSize: '3.2 MB',
-      downloadCount: 135
-    },
-    {
-      id: 5,
-      title: 'Percobaan 5: Elektrokimia',
-      description: 'Memahami konsep elektrokimia dan aplikasinya',
-      fileSize: '2.9 MB',
-      downloadCount: 128
+  const { addNotification } = useApp()
+  const [modules, setModules] = useState<Module[]>([])
+  const [groups, setGroups] = useState<Group[]>([])
+  const [loading, setLoading] = useState(true)
+  const [groupsLoading, setGroupsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [groupsError, setGroupsError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchModules = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const response = await api.get<Module[]>(endpoints.modules.list)
+        setModules(response.data || [])
+        
+      } catch (err) {
+        console.error('Error fetching modules:', err)
+        setError('Failed to load modules')
+        addNotification({
+          type: 'error',
+          title: 'Error',
+          message: 'Failed to load modules'
+        })
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    fetchModules()
+    fetchGroups()
+  }, [addNotification])
+
+  const fetchGroups = async () => {
+    try {
+      setGroupsLoading(true)
+      setGroupsError(null)
+      
+      const response = await api.get<Group[]>(endpoints.groups.list)
+      setGroups(response.data || [])
+      
+    } catch (err) {
+      console.error('Error fetching groups:', err)
+      setGroupsError('Failed to load groups')
+      addNotification({
+        type: 'error',
+        title: 'Error',
+        message: 'Failed to load groups'
+      })
+    } finally {
+      setGroupsLoading(false)
+    }
+  }
+
+  const handleDownload = async (module: Module) => {
+    try {
+      // Create a filename from the module title, ensuring it's safe for filesystem
+      const safeFilename = `${module.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`
+      await api.downloadFile(endpoints.modules.download(module.id), safeFilename)
+      addNotification({
+        type: 'success',
+        title: 'Download Berhasil',
+        message: `Modul "${module.title}" berhasil diunduh`
+      })
+    } catch (error: any) {
+      console.error('Download failed:', error)
+      addNotification({
+        type: 'error',
+        title: 'Download Gagal',
+        message: error.message || 'Gagal mengunduh modul. Silakan coba lagi.'
+      })
+    }
+  }
+
+  const handleGroupDownload = async (group: Group) => {
+    try {
+      // Create a filename from group name, ensuring it's safe for filesystem
+      const safeFilename = `${group.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pdf`
+      await api.downloadFile(endpoints.groups.download(group.id), safeFilename)
+      addNotification({
+        type: 'success',
+        title: 'Download Berhasil',
+        message: `File pembagian kelompok "${group.name}" berhasil diunduh`
+      })
+    } catch (error: any) {
+      console.error('Group download failed:', error)
+      addNotification({
+        type: 'error',
+        title: 'Download Gagal',
+        message: error.message || 'Gagal mengunduh file pembagian kelompok. Silakan coba lagi.'
+      })
+    }
+  }
 
   const schedule = [
     { day: 'Senin', time: '08:00 - 10:00', class: 'A1', room: 'Lab 1' },
@@ -124,17 +192,41 @@ export default function PraktikumPage() {
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {modules.map((module) => (
-                <Card key={module.id} className="p-8 group cursor-pointer border-neutral-100">
+            {loading && (
+              <div className="flex justify-center items-center py-20">
+                <LoadingSpinner />
+              </div>
+            )}
+
+            {error && !loading && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+                <div className="flex items-center space-x-2 text-red-800">
+                  <AlertCircle className="w-5 h-5" />
+                  <p className="font-medium">{error}</p>
+                </div>
+              </div>
+            )}
+
+            {!loading && !error && modules.length === 0 && (
+              <div className="text-center py-20">
+                <FileText className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
+                <p className="text-xl text-neutral-600 mb-2">Belum ada modul tersedia</p>
+                <p className="text-neutral-500">Modul praktikum akan muncul di sini setelah dipublikasikan.</p>
+              </div>
+            )}
+            
+            {!loading && !error && modules.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {modules.map((module) => (
+                <Card key={module.id} className="p-8 group border-neutral-100">
                   <div className="flex items-start justify-between mb-6">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
                         <FileText className="w-5 h-5 text-primary-600" />
                       </div>
-                      <span className="text-sm text-neutral-500 font-medium">{module.fileSize}</span>
+                      <span className="text-sm text-neutral-500 font-medium">{formatFileSize(module.file_size)}</span>
                     </div>
-                    <span className="badge-primary">{module.downloadCount} downloads</span>
+                    <span className="badge-primary">{module.download_count || 0} downloads</span>
                   </div>
                   
                   <h3 className="text-xl font-semibold text-neutral-900 mb-4 group-hover:text-primary-600 transition-colors duration-300">
@@ -145,13 +237,17 @@ export default function PraktikumPage() {
                     {module.description}
                   </p>
                   
-                  <Button className="w-full shadow-md hover:shadow-lg">
+                  <Button
+                    className="w-full shadow-md hover:shadow-lg"
+                    onClick={() => handleDownload(module)}
+                  >
                     <Download className="w-4 h-4 mr-2" />
                     Download Modul
                   </Button>
                 </Card>
               ))}
-            </div>
+              </div>
+            )}
           </div>
         </section>
 
@@ -220,21 +316,72 @@ export default function PraktikumPage() {
               </p>
             </div>
             
-            <Card className="p-10 text-center border-neutral-100">
-              <div className="bg-primary-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Users className="w-10 h-10 text-primary-600" />
+            {groupsLoading && (
+              <div className="flex justify-center items-center py-20">
+                <LoadingSpinner />
               </div>
-              <h3 className="text-2xl font-semibold text-neutral-900 mb-6">
-                File Pembagian Kelompok
-              </h3>
-              <p className="text-neutral-600 mb-8 leading-relaxed max-w-md mx-auto">
-                Download file pembagian kelompok untuk melihat kelompok praktikum Anda.
-              </p>
-              <Button className="shadow-lg hover:shadow-xl">
-                <Download className="w-4 h-4 mr-2" />
-                Download Pembagian Kelompok
-              </Button>
-            </Card>
+            )}
+
+            {groupsError && !groupsLoading && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+                <div className="flex items-center space-x-2 text-red-800">
+                  <AlertCircle className="w-5 h-5" />
+                  <p className="font-medium">{groupsError}</p>
+                </div>
+              </div>
+            )}
+
+            {!groupsLoading && !groupsError && groups.length === 0 && (
+              <Card className="p-10 text-center border-neutral-100">
+                <div className="bg-primary-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Users className="w-10 h-10 text-primary-600" />
+                </div>
+                <h3 className="text-2xl font-semibold text-neutral-900 mb-6">
+                  Belum Ada Pembagian Kelompok
+                </h3>
+                <p className="text-neutral-600 leading-relaxed max-w-md mx-auto">
+                  File pembagian kelompok akan muncul di sini setelah dipublikasikan.
+                </p>
+              </Card>
+            )}
+            
+            {!groupsLoading && !groupsError && groups.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {groups.map((group) => (
+                  <Card key={group.id} className="p-8 group border-neutral-100">
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                          <Users className="w-5 h-5 text-primary-600" />
+                        </div>
+                        <span className="text-sm text-neutral-500 font-medium">{formatFileSize(group.file_size)}</span>
+                      </div>
+                      <span className="badge-primary">{group.download_count || 0} downloads</span>
+                    </div>
+                    
+                    <h3 className="text-xl font-semibold text-neutral-900 mb-4 group-hover:text-primary-600 transition-colors duration-300">
+                      {group.name}
+                    </h3>
+                    
+                    <p className="text-neutral-600 mb-2 leading-relaxed">
+                      {group.description}
+                    </p>
+                    
+                    <p className="text-sm text-neutral-500 mb-6">
+                      Angkatan: {group.cohort}
+                    </p>
+                    
+                    <Button
+                      className="w-full shadow-md hover:shadow-lg"
+                      onClick={() => handleGroupDownload(group)}
+                    >
+                      <Download className="w-4 h-4 mr-2" />
+                      Download Pembagian Kelompok
+                    </Button>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </main>

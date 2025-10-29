@@ -18,6 +18,7 @@ import Button from "../components/ui/Button";
 import LoadingSpinner from "../components/ui/LoadingSpinner";
 import ErrorAlert from "../components/ErrorAlert";
 import { useApp } from "../contexts/AppContext";
+import { api } from "../lib/api";
 import Image from "next/image";
 
 export default function HomePage() {
@@ -25,33 +26,98 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  const slideshowImages = [
-    '/slideshow-1.jpeg',
-    '/slideshow-2.jpg',
-    '/slideshow-3.jpg',
-    '/slideshow-4.jpg'
+  const [previousSlide, setPreviousSlide] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [sliders, setSliders] = useState<any[]>([]);
+  const [announcements, setAnnouncements] = useState<any[]>([]);
+  const [stats, setStats] = useState<any>({});
+  
+  // Fallback slider data in case API fails
+  const fallbackSliders = [
+    { id: 1, image_path: '/slideshow-1.jpeg', title: 'Laboratorium Kimia Dasar' },
+    { id: 2, image_path: '/slideshow-2.jpg', title: 'Praktikum Kimia' },
+    { id: 3, image_path: '/slideshow-3.jpg', title: 'Eksperimen Kimia' },
+    { id: 4, image_path: '/slideshow-4.jpg', title: 'Lab Modern' }
   ];
-
+  
   useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Fetch sliders for slideshow
+        try {
+          const slidersResponse = await api.get('/api/sliders');
+          const slidersData = (slidersResponse.data as any) || [];
+          // Only use sliders if we have valid data with image_path
+          if (Array.isArray(slidersData) && slidersData.length > 0 && slidersData[0].image_path) {
+            setSliders(slidersData);
+          } else {
+            console.warn('Invalid slider data from API, using fallback');
+            setSliders(fallbackSliders);
+          }
+        } catch (sliderErr) {
+          console.warn('Failed to fetch sliders, using fallback:', sliderErr);
+          setSliders(fallbackSliders);
+        }
+        
+        // Fetch announcements
+        try {
+          const announcementsResponse = await api.get('/api/announcements');
+          setAnnouncements((announcementsResponse.data as any) || []);
+        } catch (announcementErr) {
+          console.warn('Failed to fetch announcements:', announcementErr);
+          setAnnouncements([]);
+        }
+        
+        // Fetch stats (this would need a dedicated stats endpoint)
+        // For now, we'll use mock stats
+        setStats({
+          totalStudents: 1200,
+          totalModules: 24,
+          totalAnnouncements: 15,
+          totalDownloads: 3500,
+        });
+        
+      } catch (err) {
+        console.error('Error fetching data:', err);
+        // Don't set error for slider issues, just use fallback
+        if (!sliders.length) {
+          setSliders(fallbackSliders);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, [addNotification]);
+  
   useEffect(() => {
     if (loading) return;
     
+    // Use either the loaded sliders or fallback sliders
+    const activeSliders = sliders.length > 0 ? sliders : fallbackSliders;
+    
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slideshowImages.length);
+      setPreviousSlide(currentSlide);
+      setIsTransitioning(true);
+      
+      // Start fade transition
+      setTimeout(() => {
+        setCurrentSlide((prev) => (prev + 1) % activeSliders.length);
+      }, 100);
+      
+      // End transition after fade completes
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 500);
     }, 4000); // Change slide every 4 seconds
-
+    
     return () => clearInterval(interval);
-  }, [loading, slideshowImages.length]);
-
+  }, [loading, sliders.length, currentSlide]);
+  
   const quickAccessItems = [
     {
       title: "Modul Praktikum",
@@ -74,48 +140,7 @@ export default function HomePage() {
       href: "/pengumuman",
       color: "bg-amber-500",
     },
-    {
-      title: "Nilai Praktikum",
-      description: "Cek nilai praktikum Anda",
-      icon: Award,
-      href: "/praktikum",
-      color: "bg-violet-500",
-    },
   ];
-
-  const announcements = [
-    {
-      id: 1,
-      title: "Jadwal Praktikum Semester Ganjil 2024/2025",
-      excerpt:
-        "Jadwal praktikum untuk semester ganjil telah tersedia. Silakan cek jadwal kelompok Anda.",
-      publishedAt: "2024-01-15T10:00:00Z",
-      category: "academic",
-    },
-    {
-      id: 2,
-      title: "Pembaruan Modul Praktikum",
-      excerpt:
-        "Modul praktikum telah diperbarui dengan materi terbaru. Silakan download versi terbaru.",
-      publishedAt: "2024-01-10T14:30:00Z",
-      category: "info",
-    },
-    {
-      id: 3,
-      title: "Panduan Praktikum Online",
-      excerpt:
-        "Panduan lengkap untuk mengikuti praktikum online dapat diakses di halaman praktikum.",
-      publishedAt: "2024-01-05T09:15:00Z",
-      category: "info",
-    },
-  ];
-
-  const stats = {
-    totalStudents: 1200,
-    totalModules: 24,
-    totalAnnouncements: 15,
-    totalDownloads: 3500,
-  };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
@@ -230,19 +255,60 @@ export default function HomePage() {
             </div>
 
             {/* Center Image - Enhanced with better effects */}
-            <div className="relative aspect-[4/5] bg-gradient-to-br from-teal-100 to-cyan-200 rounded-3xl overflow-hidden shadow-3xl md:transform md:scale-110 md:z-10 md:hover:scale-115 transition-all duration-500 group">
-              <div className="absolute inset-0 bg-gradient-to-t from-teal-900/30 via-transparent to-transparent"></div>
-              <img
-                src={slideshowImages[currentSlide]}
-                alt="Praktikum featured"
-                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-              />
+            <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-3xl md:transform md:scale-110 md:z-10 md:hover:scale-115 transition-all duration-500 group" style={{ backgroundColor: '#ccfbf1' }}>
+              {/* Solid background to prevent bleed-through - always visible and solid */}
+              <div className="absolute inset-0 rounded-3xl" style={{ 
+                background: 'linear-gradient(to bottom right, rgb(204 251 241), rgb(165 243 252))', 
+                opacity: 1, 
+                zIndex: 0 
+              }}></div>
+              
+              {/* Image container with fade transition - only images fade */}
+              <div className="absolute inset-0 rounded-3xl overflow-hidden" style={{ zIndex: 1 }}>
+                {(sliders.length > 0 ? sliders : fallbackSliders).map((slider, index) => {
+                  const imageSrc = slider.image_path || fallbackSliders[index]?.image_path || '/slideshow-1.jpeg';
+                  const isActive = index === currentSlide;
+                  const wasPrevious = index === previousSlide;
+                  
+                  return (
+                    <div
+                      key={`slide-wrapper-${index}`}
+                      className="absolute inset-0 w-full h-full"
+                      style={{
+                        opacity: isActive ? 1 : (wasPrevious && isTransitioning ? 0 : 0),
+                        transition: 'opacity 500ms ease-in-out',
+                        zIndex: isActive ? 10 : (wasPrevious && isTransitioning ? 5 : 0),
+                        pointerEvents: isActive ? 'auto' : 'none'
+                      }}
+                    >
+                      <img
+                        src={imageSrc}
+                        alt={slider.title || 'Praktikum featured'}
+                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Gradient overlay - always visible, maintains card appearance */}
+              <div className="absolute inset-0 bg-gradient-to-t from-teal-900/30 via-transparent to-transparent rounded-3xl pointer-events-none" style={{ opacity: 1, zIndex: 20 }}></div>
+              
               {/* Enhanced slide indicators */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
-                {slideshowImages.map((_, index) => (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2" style={{ zIndex: 30 }}>
+                {(sliders.length > 0 ? sliders : fallbackSliders).map((_, index) => (
                   <button
                     key={index}
-                    onClick={() => setCurrentSlide(index)}
+                    onClick={() => {
+                      setPreviousSlide(currentSlide);
+                      setIsTransitioning(true);
+                      setTimeout(() => {
+                        setCurrentSlide(index);
+                      }, 100);
+                      setTimeout(() => {
+                        setIsTransitioning(false);
+                      }, 500);
+                    }}
                     className={`h-2 rounded-full transition-all duration-300 ${
                       index === currentSlide
                         ? 'bg-white w-8 shadow-lg'
@@ -400,7 +466,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {quickAccessItems.map((item, index) => (
               <Link key={index} href={item.href}>
                 <Card className="p-8 text-center group cursor-pointer border-neutral-100 h-full flex flex-col">

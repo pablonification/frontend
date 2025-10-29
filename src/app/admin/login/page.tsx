@@ -6,6 +6,7 @@ import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
 import Button from '../../../components/ui/Button'
 import Card from '../../../components/ui/Card'
 import { useApp } from '../../../contexts/AppContext'
+import { api, endpoints, LoginResponse } from '../../../lib/api'
 
 export default function AdminLogin() {
   const router = useRouter()
@@ -33,22 +34,82 @@ export default function AdminLogin() {
     setError(null)
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Demo credentials
-      if (formData.email === 'admin@labkimia.ac.id' && formData.password === 'admin123') {
-        addNotification({
-          type: 'success',
-          title: 'Login Berhasil',
-          message: 'Selamat datang di dashboard admin'
+      // Try to login using the real API
+      try {
+        const response = await api.post<LoginResponse>(endpoints.auth.login, {
+          email: formData.email,
+          password: formData.password
         })
-        router.push('/admin')
-      } else {
-        setError('Email atau password salah')
+        
+        console.log('Login API response:', response)
+        
+        // Handle different response structures
+        let token: string | null = null
+        let user: any = null
+        
+        // Check if token is in response.data.token (expected structure)
+        if (response.data && (response.data as any).token) {
+          token = (response.data as any).token
+          user = (response.data as any).user
+        } 
+        // Check if token is directly in response.data (alternative structure)
+        else if (response.data && typeof response.data === 'object' && 'token' in response.data) {
+          token = (response.data as any).token
+          user = (response.data as any).user
+        }
+        // Check if response itself has token (rare case)
+        else if ((response as any).token) {
+          token = (response as any).token
+          user = (response as any).user
+        }
+        
+        if (token) {
+          localStorage.setItem('auth_token', token)
+          console.log('Token saved to localStorage:', token.substring(0, 20) + '...')
+          
+          // Store user data
+          if (user) {
+            localStorage.setItem('user_data', JSON.stringify(user))
+          }
+          
+          addNotification({
+            type: 'success',
+            title: 'Login Berhasil',
+            message: 'Selamat datang di dashboard admin'
+          })
+          router.push('/admin')
+        } else {
+          console.error('No token found in response:', response)
+          console.error('Response structure:', JSON.stringify(response, null, 2))
+          setError('Token tidak diterima dari server. Periksa console untuk detail.')
+        }
+      } catch (apiError: any) {
+        console.error('API login error:', apiError)
+        
+        // Check if it's a network error (backend not running)
+        if (apiError.message && (
+          apiError.message.includes('Unable to connect') || 
+          apiError.message.includes('Network error') ||
+          apiError.message.includes('Failed to fetch')
+        )) {
+          // Backend tidak tersedia, gunakan mock auth sebagai fallback
+          console.warn('Backend tidak tersedia, menggunakan mock auth')
+          
+          if (formData.email === 'admin@labkimia.ac.id' && formData.password === 'admin123') {
+            // JANGAN gunakan mock token jika backend tersedia
+            // User harus menggunakan backend yang sebenarnya
+            setError('Backend server tidak tersedia. Pastikan backend berjalan di http://localhost:5001')
+            return
+          } else {
+            setError('Email atau password salah')
+          }
+        } else {
+          // API error lainnya (invalid credentials, dll)
+          setError(apiError.message || 'Email atau password salah')
+        }
       }
-    } catch (err) {
-      setError('Terjadi kesalahan saat login')
+    } catch (err: any) {
+      setError(err.message || 'Email atau password salah')
     } finally {
       setLoading(false)
     }

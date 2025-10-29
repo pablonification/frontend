@@ -35,10 +35,12 @@ export default function FileUpload({
     // Check file type
     if (acceptedTypes[0] !== '*') {
       const fileExtension = file.name.split('.').pop()?.toLowerCase()
-      const isValidType = acceptedTypes.some(type => 
-        type.toLowerCase() === fileExtension || 
-        type.toLowerCase() === `*.${fileExtension}`
-      )
+      const isValidType = acceptedTypes.some(type => {
+        const normalizedType = type.toLowerCase()
+        return normalizedType === `.${fileExtension}` ||
+               normalizedType === fileExtension ||
+               normalizedType === `*.${fileExtension}`
+      })
       
       if (!isValidType) {
         return `Tipe file tidak didukung. Gunakan: ${acceptedTypes.join(', ')}`
