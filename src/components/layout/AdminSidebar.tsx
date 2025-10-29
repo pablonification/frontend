@@ -62,7 +62,7 @@ export default function AdminSidebar() {
   }
 
   return (
-    <div className={`bg-white border-r border-neutral-100 h-screen flex flex-col transition-all duration-300 ${
+    <div className={`bg-white border-r border-neutral-100 min-h-screen flex flex-col transition-all duration-300 ${
       isCollapsed ? 'w-20' : 'w-72'
     }`}>
       {/* Header */}
