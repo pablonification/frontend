@@ -1,8 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
   FileText,
@@ -13,13 +13,48 @@ import {
   LogOut,
   Menu,
   X,
-  Home
+  Home,
+  Users
 } from 'lucide-react'
 import Button from '../ui/Button'
+import { api, endpoints } from '../../lib/api'
+import { useApp } from '../../contexts/AppContext'
 
 export default function AdminSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
+  const { addNotification } = useApp()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const handleLogout = async () => {
+    try {
+      // For demo purposes, skip API call and just clear local storage
+      
+      // Clear authentication token
+      localStorage.removeItem('auth_token')
+      localStorage.removeItem('user_data')
+      
+      addNotification({
+        type: 'success',
+        title: 'Logout Berhasil',
+        message: 'Anda telah keluar dari dashboard admin'
+      })
+      
+      // Redirect to login page
+      router.push('/admin/login')
+    } catch (error: any) {
+      console.error('Logout error:', error)
+      // Even if logout fails, clear local token and redirect
+      localStorage.removeItem('auth_token')
+      localStorage.removeItem('user_data')
+      router.push('/admin/login')
+    }
+  }
 
   const navigation = [
     {
@@ -33,11 +68,6 @@ export default function AdminSidebar() {
       icon: FileText
     },
     {
-      name: 'Slider',
-      href: '/admin/sliders',
-      icon: Image
-    },
-    {
       name: 'File',
       href: '/admin/files',
       icon: FileText
@@ -46,6 +76,11 @@ export default function AdminSidebar() {
       name: 'Modul',
       href: '/admin/modules',
       icon: BookOpen
+    },
+    {
+      name: 'Kelompok',
+      href: '/admin/groups',
+      icon: Users
     },
     {
       name: 'Nilai',
@@ -63,12 +98,12 @@ export default function AdminSidebar() {
 
   return (
     <div className={`bg-white border-r border-neutral-100 min-h-screen flex flex-col transition-all duration-300 ${
-      isCollapsed ? 'w-20' : 'w-72'
+      mounted && isCollapsed ? 'w-20' : 'w-72'
     }`}>
       {/* Header */}
       <div className="p-6 border-b border-neutral-100">
         <div className="flex items-center justify-between">
-          {!isCollapsed && (
+          {mounted && !isCollapsed && (
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center shadow-sm">
                 <span className="text-white font-bold text-lg">A</span>
@@ -78,12 +113,14 @@ export default function AdminSidebar() {
               </span>
             </div>
           )}
-          <button
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-2.5 text-neutral-600 hover:text-primary-600 hover:bg-neutral-50 rounded-xl transition-all duration-300 hover:-translate-y-0.5"
-          >
-            {isCollapsed ? <Menu className="w-5 h-5" /> : <X className="w-5 h-5" />}
-          </button>
+          {mounted && (
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-2.5 text-neutral-600 hover:text-primary-600 hover:bg-neutral-50 rounded-xl transition-all duration-300 hover:-translate-y-0.5"
+            >
+              {isCollapsed ? <Menu className="w-5 h-5" /> : <X className="w-5 h-5" />}
+            </button>
+          )}
         </div>
       </div>
 
@@ -106,7 +143,7 @@ export default function AdminSidebar() {
               <Icon className={`w-5 h-5 flex-shrink-0 ${
                 active ? 'text-primary-600' : 'text-neutral-500 group-hover:text-primary-600'
               }`} />
-              {!isCollapsed && (
+              {mounted && !isCollapsed && (
                 <span className="font-medium">{item.name}</span>
               )}
             </Link>
@@ -122,15 +159,18 @@ export default function AdminSidebar() {
           className="flex items-center space-x-3 px-4 py-3 text-neutral-600 hover:text-primary-600 hover:bg-neutral-50 rounded-xl transition-all duration-300 group hover:shadow-sm"
         >
           <Home className="w-5 h-5 text-neutral-500 group-hover:text-primary-600" />
-          {!isCollapsed && (
+          {mounted && !isCollapsed && (
             <span className="font-medium">Kembali ke Website</span>
           )}
         </Link>
 
         {/* Logout */}
-        <button className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-all duration-300 group hover:shadow-sm">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-all duration-300 group hover:shadow-sm"
+        >
           <LogOut className="w-5 h-5 text-red-500 group-hover:text-red-600" />
-          {!isCollapsed && (
+          {mounted && !isCollapsed && (
             <span className="font-medium">Keluar</span>
           )}
         </button>

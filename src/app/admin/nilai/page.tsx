@@ -1,12 +1,15 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Plus, Edit, Trash2, Download, Award, Lock, AlertCircle } from 'lucide-react'
+import { Plus, Edit, Trash2, Download, Award, Lock, AlertCircle, Eye } from 'lucide-react'
 import Card from '../../../components/ui/Card'
 import Button from '../../../components/ui/Button'
 import DataTable from '../../../components/shared/DataTable'
 import Badge from '../../../components/ui/Badge'
 import LoadingSpinner from '../../../components/ui/LoadingSpinner'
+import Modal from '../../../components/ui/Modal'
+import FilePreview from '../../../components/shared/FilePreview'
+import NilaiForm, { NilaiFormData } from '../../../components/forms/NilaiForm'
 import { useApp } from '../../../contexts/AppContext'
 import { api, endpoints, NilaiFile } from '../../../lib/api'
 
@@ -15,6 +18,10 @@ export default function AdminNilai() {
   const [nilaiFiles, setNilaiFiles] = useState<NilaiFile[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingNilaiFile, setEditingNilaiFile] = useState<NilaiFile | null>(null)
+  const [formLoading, setFormLoading] = useState(false)
+  const [previewFile, setPreviewFile] = useState<NilaiFile | null>(null)
 
   useEffect(() => {
     const fetchNilaiFiles = async () => {
@@ -30,6 +37,7 @@ export default function AdminNilai() {
         setError('Failed to load nilai files')
         addNotification({
           type: 'error',
+          title: 'Error',
           message: 'Failed to load nilai files'
         })
       } finally {
@@ -40,7 +48,119 @@ export default function AdminNilai() {
     fetchNilaiFiles()
   }, [addNotification])
 
-  const handleDelete = async (id: number) => {
+  const handleCreate = () => {
+    setEditingNilaiFile(null)
+    setIsModalOpen(true)
+  }
+
+  const handleEdit = (nilaiFile: NilaiFile) => {
+    setEditingNilaiFile(nilaiFile)
+    setIsModalOpen(true)
+  }
+
+  const handlePreview = (nilaiFile: NilaiFile) => {
+    setPreviewFile(nilaiFile)
+  }
+
+  const handleDownload = async (id: string | number) => {
+    try {
+      const response = await api.get(endpoints.nilai.download(id))
+      // Create download link
+      const url = (response.data as any).download_url || `/api/nilai/${id}/download`
+      const link = document.createElement('a')
+      link.href = url
+      link.download = ''
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      addNotification({
+        type: 'success',
+        title: 'Berhasil',
+        message: 'File nilai berhasil diunduh'
+      })
+    } catch (err) {
+      console.error('Error downloading nilai file:', err)
+      addNotification({
+        type: 'error',
+        title: 'Error',
+        message: 'Gagal mengunduh file nilai'
+      })
+    }
+  }
+
+  const handleFormSubmit = async (data: NilaiFormData) => {
+    setFormLoading(true)
+    
+    try {
+      if (editingNilaiFile) {
+        // Update existing nilai file
+        const response = await api.put(endpoints.nilai.update(editingNilaiFile.id), {
+          class: data.class,
+          cohort: data.cohort,
+          has_password: data.has_password,
+          password: data.has_password ? data.password : null
+        })
+        
+        setNilaiFiles(prev =>
+          prev.map(file =>
+            file.id === editingNilaiFile.id
+              ? { ...file, ...(response.data as any) }
+              : file
+          )
+        )
+        
+        addNotification({
+          type: 'success',
+          title: 'Berhasil',
+          message: 'File nilai berhasil diperbarui'
+        })
+      } else {
+        // Create new nilai file
+        const formData = new FormData()
+        formData.append('file', data.file as File)
+        formData.append('class', data.class)
+        formData.append('cohort', data.cohort)
+        if (data.has_password) {
+          formData.append('password', data.password)
+        }
+        
+        const response = await api.uploadFile(endpoints.nilai.create, data.file as any, {
+          class: data.class,
+          cohort: data.cohort,
+          has_password: data.has_password,
+          password: data.has_password ? data.password : undefined
+        })
+        
+        setNilaiFiles(prev => [(response.data as any), ...prev])
+        
+        addNotification({
+          type: 'success',
+          title: 'Berhasil',
+          message: 'File nilai berhasil diupload'
+        })
+      }
+      
+      setIsModalOpen(false)
+      setEditingNilaiFile(null)
+    } catch (err) {
+      console.error('Error saving nilai file:', err)
+      addNotification({
+        type: 'error',
+        title: 'Error',
+        message: 'Gagal menyimpan file nilai'
+      })
+    } finally {
+      setFormLoading(false)
+    }
+  }
+
+  const handleModalClose = () => {
+    setIsModalOpen(false)
+    setEditingNilaiFile(null)
+  }
+
+  const handleDelete = async (id: string | number) => {
     if (!confirm('Are you sure you want to delete this nilai file?')) {
       return
     }
@@ -50,12 +170,14 @@ export default function AdminNilai() {
       setNilaiFiles(prev => prev.filter(file => file.id !== id))
       addNotification({
         type: 'success',
+        title: 'Berhasil',
         message: 'Nilai file deleted successfully'
       })
     } catch (err) {
       console.error('Error deleting nilai file:', err)
       addNotification({
         type: 'error',
+        title: 'Error',
         message: 'Failed to delete nilai file'
       })
     }
@@ -109,15 +231,30 @@ export default function AdminNilai() {
       label: 'Aksi',
       render: (value: any, item: NilaiFile) => (
         <div className="flex items-center space-x-2">
-          <Button variant="ghost" size="sm">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handlePreview(item)}
+          >
+            <Eye className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleDownload(item.id)}
+          >
             <Download className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="sm">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleEdit(item)}
+          >
             <Edit className="w-4 h-4" />
           </Button>
-          <Button 
-            variant="ghost" 
-            size="sm" 
+          <Button
+            variant="ghost"
+            size="sm"
             className="text-red-600 hover:text-red-700"
             onClick={() => handleDelete(item.id)}
           >
@@ -158,7 +295,7 @@ export default function AdminNilai() {
               Upload dan kelola file nilai praktikum mahasiswa
             </p>
           </div>
-          <Button>
+          <Button onClick={handleCreate}>
             <Plus className="w-4 h-4 mr-2" />
             Upload File Nilai
           </Button>
@@ -172,6 +309,29 @@ export default function AdminNilai() {
             totalPages={1}
           />
         </Card>
+
+        {/* Nilai Form Modal */}
+        <Modal
+          isOpen={isModalOpen}
+          onClose={handleModalClose}
+          title={editingNilaiFile ? 'Edit File Nilai' : 'Upload File Nilai'}
+          size="lg"
+        >
+          <NilaiForm
+            nilaiFile={editingNilaiFile}
+            onSubmit={handleFormSubmit}
+            onCancel={handleModalClose}
+            loading={formLoading}
+          />
+        </Modal>
+
+        {/* File Preview Modal */}
+        <FilePreview
+          isOpen={!!previewFile}
+          onClose={() => setPreviewFile(null)}
+          file={previewFile as any}
+          onDownload={handleDownload}
+        />
     </div>
   )
 }

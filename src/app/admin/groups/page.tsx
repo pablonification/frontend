@@ -1,66 +1,66 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Plus, Edit, Trash2, Download, BookOpen, AlertCircle } from 'lucide-react'
+import { Plus, Edit, Trash2, Download, Users, AlertCircle } from 'lucide-react'
 import Card from '../../../components/ui/Card'
 import Button from '../../../components/ui/Button'
 import DataTable from '../../../components/shared/DataTable'
 import Badge from '../../../components/ui/Badge'
 import LoadingSpinner from '../../../components/ui/LoadingSpinner'
 import Modal from '../../../components/ui/Modal'
-import ModuleForm, { ModuleFormData } from '../../../components/forms/ModuleForm'
+import GroupForm, { GroupFormData } from '../../../components/forms/GroupForm'
 import { useApp } from '../../../contexts/AppContext'
-import { api, endpoints, Module } from '../../../lib/api'
+import { api, endpoints, Group } from '../../../lib/api'
 
-export default function AdminModules() {
+export default function AdminGroups() {
   const { addNotification } = useApp()
-  const [modules, setModules] = useState<Module[]>([])
+  const [groups, setGroups] = useState<Group[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingModule, setEditingModule] = useState<Module | null>(null)
+  const [editingGroup, setEditingGroup] = useState<Group | null>(null)
   const [formLoading, setFormLoading] = useState(false)
 
   useEffect(() => {
-    const fetchModules = async () => {
+    const fetchGroups = async () => {
       try {
         setLoading(true)
         setError(null)
         
-        const response = await api.get<Module[]>(endpoints.modules.list)
-        setModules(response.data || [])
+        const response = await api.get<Group[]>(endpoints.groups.list)
+        setGroups(response.data || [])
         
       } catch (err) {
-        console.error('Error fetching modules:', err)
-        setError('Failed to load modules')
+        console.error('Error fetching groups:', err)
+        setError('Failed to load groups')
         addNotification({
           type: 'error',
           title: 'Error',
-          message: 'Failed to load modules'
+          message: 'Failed to load groups'
         })
       } finally {
         setLoading(false)
       }
     }
 
-    fetchModules()
+    fetchGroups()
   }, [addNotification])
 
   const handleCreate = () => {
-    setEditingModule(null)
+    setEditingGroup(null)
     setIsModalOpen(true)
   }
 
-  const handleEdit = (module: Module) => {
-    setEditingModule(module)
+  const handleEdit = (group: Group) => {
+    setEditingGroup(group)
     setIsModalOpen(true)
   }
 
   const handleDownload = async (id: string | number) => {
     try {
-      const response = await api.get(endpoints.modules.get(id))
+      const response = await api.get(endpoints.groups.get(id))
       // Create download link
-      const url = (response.data as any).file_path
+      const url = (response.data as any).storage_path
       const link = document.createElement('a')
       link.href = url
       link.download = ''
@@ -71,78 +71,81 @@ export default function AdminModules() {
       addNotification({
         type: 'success',
         title: 'Berhasil',
-        message: 'Modul berhasil diunduh'
+        message: 'File pembagian kelompok berhasil diunduh'
       })
     } catch (err) {
-      console.error('Error downloading module:', err)
+      console.error('Error downloading group:', err)
       addNotification({
         type: 'error',
         title: 'Error',
-        message: 'Gagal mengunduh modul'
+        message: 'Gagal mengunduh file pembagian kelompok'
       })
     }
   }
 
-  const handleFormSubmit = async (data: ModuleFormData) => {
+  const handleFormSubmit = async (data: GroupFormData) => {
     setFormLoading(true)
     
     try {
-      if (editingModule) {
-        // Update existing module
+      if (editingGroup) {
+        // Update existing group
         const formData = new FormData()
         if (data.file) {
           formData.append('file', data.file)
         }
-        formData.append('title', data.title)
+        formData.append('name', data.name)
         formData.append('description', data.description)
+        formData.append('cohort', data.cohort)
         formData.append('visibility', data.visibility)
         
-        const response = await api.put(endpoints.modules.update(editingModule.id), formData)
+        const response = await api.put(endpoints.groups.update(editingGroup.id), formData)
         
-        setModules(prev =>
-          prev.map(mod =>
-            mod.id === editingModule.id
-              ? { ...mod, ...(response.data as any) }
-              : mod
+        setGroups(prev =>
+          prev.map(group =>
+            group.id === editingGroup.id
+              ? { ...group, ...(response.data as any) }
+              : group
           )
         )
         
         addNotification({
           type: 'success',
           title: 'Berhasil',
-          message: 'Modul berhasil diperbarui'
+          message: 'Pembagian kelompok berhasil diperbarui'
         })
       } else {
-        // Create new module
+        // Create new group
         const formData = new FormData()
         formData.append('file', data.file as File)
-        formData.append('title', data.title)
+        formData.append('name', data.name)
         formData.append('description', data.description)
+        formData.append('cohort', data.cohort)
         formData.append('visibility', data.visibility)
         
-        const response = await api.uploadFile(endpoints.modules.create, data.file as any, {
-          title: data.title,
+        const response = await api.uploadFile(endpoints.groups.create, data.file as any, {
+          name: data.name,
           description: data.description,
+          cohort: data.cohort,
           visibility: data.visibility
         })
         
-        setModules(prev => [(response.data as any), ...prev])
+        setGroups(prev => [(response.data as any), ...prev])
         
         addNotification({
           type: 'success',
           title: 'Berhasil',
-          message: 'Modul berhasil dibuat'
+          message: 'Pembagian kelompok berhasil dibuat'
         })
       }
       
       setIsModalOpen(false)
-      setEditingModule(null)
+      setEditingGroup(null)
     } catch (err) {
-      console.error('Error saving module:', err)
+      console.error('Error saving group:', err)
       addNotification({
         type: 'error',
         title: 'Error',
-        message: 'Gagal menyimpan modul'
+        message: 'Gagal menyimpan pembagian kelompok'
       })
     } finally {
       setFormLoading(false)
@@ -151,44 +154,45 @@ export default function AdminModules() {
 
   const handleModalClose = () => {
     setIsModalOpen(false)
-    setEditingModule(null)
+    setEditingGroup(null)
   }
 
   const handleDelete = async (id: string | number) => {
-    if (!confirm('Are you sure you want to delete this module?')) {
+    if (!confirm('Are you sure you want to delete this group file?')) {
       return
     }
 
     try {
-      await api.delete(endpoints.modules.delete(id))
-      setModules(prev => prev.filter(module => module.id !== id))
+      await api.delete(endpoints.groups.delete(id))
+      setGroups(prev => prev.filter(group => group.id !== id))
       addNotification({
         type: 'success',
         title: 'Berhasil',
-        message: 'Module deleted successfully'
+        message: 'Group file deleted successfully'
       })
     } catch (err) {
-      console.error('Error deleting module:', err)
+      console.error('Error deleting group:', err)
       addNotification({
         type: 'error',
         title: 'Error',
-        message: 'Failed to delete module'
+        message: 'Failed to delete group file'
       })
     }
   }
 
   const columns = [
     {
-      key: 'title' as const,
-      label: 'Modul',
-      render: (value: string, item: Module) => (
+      key: 'name' as const,
+      label: 'Nama Kelompok',
+      render: (value: string, item: Group) => (
         <div className="flex items-start space-x-3">
           <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center flex-shrink-0">
-            <BookOpen className="w-5 h-5 text-primary-600" />
+            <Users className="w-5 h-5 text-primary-600" />
           </div>
           <div>
             <p className="font-medium text-neutral-900">{value}</p>
             <p className="text-sm text-neutral-500 mt-1">{item.description}</p>
+            <p className="text-xs text-neutral-400 mt-1">Angkatan: {item.cohort}</p>
           </div>
         </div>
       )
@@ -214,7 +218,7 @@ export default function AdminModules() {
     {
       key: 'actions' as const,
       label: 'Aksi',
-      render: (value: any, item: Module) => (
+      render: (value: any, item: Group) => (
         <div className="flex items-center space-x-2">
           <Button
             variant="ghost"
@@ -244,7 +248,7 @@ export default function AdminModules() {
   ]
 
   if (loading) {
-    return <LoadingSpinner.Page message="Memuat modul..." />
+    return <LoadingSpinner.Page message="Memuat pembagian kelompok..." />
   }
 
   if (error) {
@@ -252,7 +256,7 @@ export default function AdminModules() {
       <div className="p-8">
         <div className="text-center">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-neutral-900 mb-2">Error Loading Modules</h2>
+          <h2 className="text-2xl font-bold text-neutral-900 mb-2">Error Loading Groups</h2>
           <p className="text-neutral-600 mb-4">{error}</p>
           <Button onClick={() => window.location.reload()}>
             Try Again
@@ -267,36 +271,36 @@ export default function AdminModules() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-neutral-900 mb-2">
-              Kelola Modul Praktikum
+              Kelola Pembagian Kelompok
             </h1>
             <p className="text-neutral-600">
-              Upload dan kelola modul praktikum untuk mahasiswa
+              Upload dan kelola file pembagian kelompok untuk mahasiswa
             </p>
           </div>
           <Button onClick={handleCreate}>
             <Plus className="w-4 h-4 mr-2" />
-            Tambah Modul
+            Tambah Pembagian Kelompok
           </Button>
         </div>
 
         <Card className="p-6">
           <DataTable
-            data={modules}
+            data={groups}
             columns={columns}
             page={1}
             totalPages={1}
           />
         </Card>
 
-        {/* Module Form Modal */}
+        {/* Group Form Modal */}
         <Modal
           isOpen={isModalOpen}
           onClose={handleModalClose}
-          title={editingModule ? 'Edit Modul' : 'Tambah Modul'}
+          title={editingGroup ? 'Edit Pembagian Kelompok' : 'Tambah Pembagian Kelompok'}
           size="lg"
         >
-          <ModuleForm
-            module={editingModule}
+          <GroupForm
+            group={editingGroup}
             onSubmit={handleFormSubmit}
             onCancel={handleModalClose}
             loading={formLoading}

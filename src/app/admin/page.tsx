@@ -32,7 +32,6 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState({
     totalAnnouncements: 0,
     totalFiles: 0,
-    totalSliders: 0,
     totalModules: 0,
     totalNilai: 0
   })
@@ -49,78 +48,91 @@ export default function AdminDashboard() {
   const [recentActivities, setRecentActivities] = useState([])
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    // Use mock data instead of API calls for demo purposes
+    const loadMockData = () => {
       try {
         setLoading(true)
         setError(null)
 
-        // Fetch all data in parallel
-        const [announcementsRes, filesRes, slidersRes, modulesRes, nilaiRes] = await Promise.all([
-          api.get(endpoints.announcements.list),
-          api.get(endpoints.files.list),
-          api.get(endpoints.sliders.list),
-          api.get(endpoints.modules.list),
-          api.get(endpoints.nilai.list)
-        ])
-
+        // Mock stats
         setStats({
-          totalAnnouncements: announcementsRes.data?.length || 0,
-          totalFiles: filesRes.data?.length || 0,
-          totalSliders: slidersRes.data?.length || 0,
-          totalModules: modulesRes.data?.length || 0,
-          totalNilai: nilaiRes.data?.length || 0
+          totalAnnouncements: 5,
+          totalFiles: 12,
+          totalModules: 8,
+          totalNilai: 6
         })
 
-        // Mock insights - replace with real API calls
+        // Mock insights
         setInsights({
-          pendingApprovals: 3,
-          weeklyDownloads: 1247,
+          pendingApprovals: 2,
+          weeklyDownloads: 247,
           activeUsers: 342,
-          storageUsed: 67.5,
+          storageUsed: 65,
           popularContent: [
-            { name: 'Modul Praktikum 3', downloads: 156 },
-            { name: 'Jadwal Semester Ganjil', views: 892 },
-            { name: 'Panduan Lab Safety', downloads: 134 }
+            { name: 'Modul Praktikum Dasar Kimia', downloads: 89 },
+            { name: 'Jadwal Praktikum Semester Ganjil', views: 156 },
+            { name: 'Petunjuk Praktikum Aman', downloads: 73 }
           ]
         })
 
-        // Mock activities - replace with real API
-        setRecentActivities([
+        // Mock recent activities
+        const mockActivities = [
           {
             id: 1,
             type: 'upload',
-            title: 'File "Modul 5.pdf" telah diupload',
+            title: 'File "Modul Praktikum 5" telah diupload',
             user: 'Admin User',
-            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
             icon: FileText,
             color: 'primary'
           },
           {
             id: 2,
             type: 'update',
-            title: 'Pengumuman "Jadwal Praktikum" diperbarui',
+            title: 'Pengumuman "Jadwal Ujian" diperbarui',
             user: 'Admin User',
-            timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
+            timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
             icon: AlertCircle,
             color: 'amber'
           },
           {
             id: 3,
-            type: 'delete',
-            title: 'Slider lama telah dihapus',
+            type: 'upload',
+            title: 'File "Nilai Kelas A" telah diupload',
             user: 'Admin User',
-            timestamp: new Date(Date.now() - 6 * 60 * 60 * 1000),
-            icon: Image,
-            color: 'rose'
+            timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+            icon: FileText,
+            color: 'primary'
+          },
+          {
+            id: 4,
+            type: 'update',
+            title: 'Modul "Praktikum Lanjutan" diperbarui',
+            user: 'Admin User',
+            timestamp: new Date(Date.now() - 48 * 60 * 60 * 1000), // 2 days ago
+            icon: BookOpen,
+            color: 'violet'
+          },
+          {
+            id: 5,
+            type: 'upload',
+            title: 'File "Petunjuk Keselamatan" telah diupload',
+            user: 'Admin User',
+            timestamp: new Date(Date.now() - 72 * 60 * 60 * 1000), // 3 days ago
+            icon: FileText,
+            color: 'primary'
           }
-        ])
+        ]
+        
+        setRecentActivities(mockActivities)
 
       } catch (err) {
-        console.error('Error fetching dashboard data:', err)
+        console.error('Error loading mock data:', err)
         const errorMessage = err instanceof Error ? err.message : 'Failed to load dashboard'
         setError(errorMessage)
         addNotification({
           type: 'error',
+          title: 'Error',
           message: errorMessage
         })
       } finally {
@@ -128,7 +140,7 @@ export default function AdminDashboard() {
       }
     }
 
-    fetchDashboardData()
+    loadMockData()
   }, [addNotification])
 
   const formatTimeAgo = (date: Date) => {
@@ -181,7 +193,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Overview - Enhanced with trend indicators */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="p-6 border-neutral-100 hover:shadow-lg transition-shadow duration-300">
           <div className="flex items-start justify-between mb-4">
             <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
@@ -196,22 +208,6 @@ export default function AdminDashboard() {
             {stats.totalAnnouncements}
           </p>
           <p className="text-sm text-neutral-600 font-medium">Pengumuman</p>
-        </Card>
-
-        <Card className="p-6 border-neutral-100 hover:shadow-lg transition-shadow duration-300">
-          <div className="flex items-start justify-between mb-4">
-            <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-              <Image className="w-6 h-6 text-emerald-600" />
-            </div>
-            <span className="text-xs text-emerald-600 flex items-center font-semibold">
-              <TrendingUp className="w-3 h-3 mr-1" />
-              +5%
-            </span>
-          </div>
-          <p className="text-3xl font-bold text-neutral-900 mb-1">
-            {stats.totalSliders}
-          </p>
-          <p className="text-sm text-neutral-600 font-medium">Slider</p>
         </Card>
 
         <Card className="p-6 border-neutral-100 hover:shadow-lg transition-shadow duration-300">

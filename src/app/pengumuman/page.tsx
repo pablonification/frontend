@@ -1,62 +1,59 @@
-import { Metadata } from 'next'
+'use client'
+
+import { useState, useEffect } from 'react'
 import { Calendar, Clock, AlertCircle } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Badge from '../../components/ui/Badge'
+import LoadingSpinner from '../../components/ui/LoadingSpinner'
+import { useApp } from '../../contexts/AppContext'
+import { api, endpoints, Announcement } from '../../lib/api'
 
-export const metadata: Metadata = {
-  title: 'Pengumuman - Lab Kimia Dasar',
-  description: 'Informasi terkini dari Laboratorium Kimia Dasar tentang praktikum, jadwal, dan hal penting lainnya.',
+interface TransformedAnnouncement extends Omit<Announcement, 'is_important' | 'published_at'> {
+  isImportant: boolean
+  publishedAt: string
+  excerpt: string
 }
 
 export default function PengumumanPage() {
-  const announcements = [
-    {
-      id: 1,
-      title: 'Jadwal Praktikum Semester Genap 2024',
-      excerpt: 'Jadwal praktikum untuk semester genap 2024 telah tersedia. Silakan cek jadwal masing-masing kelompok dan pastikan kehadiran tepat waktu.',
-      content: 'Jadwal praktikum untuk semester genap 2024 telah tersedia. Silakan cek jadwal masing-masing kelompok dan pastikan kehadiran tepat waktu. Praktikum akan dimulai pada minggu kedua semester. Pastikan Anda telah menyiapkan modul praktikum dan alat tulis yang diperlukan.',
-      publishedAt: '2024-01-15T10:00:00Z',
-      isImportant: true,
-      attachments: ['jadwal-praktikum-2024.pdf']
-    },
-    {
-      id: 2,
-      title: 'Pembagian Kelompok Praktikum',
-      excerpt: 'Daftar pembagian kelompok praktikum kimia dasar telah diumumkan. Cek kelompok Anda di halaman praktikum.',
-      content: 'Daftar pembagian kelompok praktikum kimia dasar telah diumumkan. Setiap kelompok terdiri dari 4-5 mahasiswa. Silakan cek kelompok Anda di halaman praktikum dan pastikan Anda mengetahui jadwal praktikum kelompok Anda.',
-      publishedAt: '2024-01-12T14:30:00Z',
-      isImportant: false,
-      attachments: ['pembagian-kelompok-2024.pdf']
-    },
-    {
-      id: 3,
-      title: 'Modul Praktikum Terbaru',
-      excerpt: 'Modul praktikum untuk percobaan 1-5 telah diperbarui. Silakan download modul terbaru sebelum praktikum dimulai.',
-      content: 'Modul praktikum untuk percobaan 1-5 telah diperbarui dengan beberapa perbaikan dan penambahan materi. Silakan download modul terbaru sebelum praktikum dimulai. Pastikan Anda membawa modul yang sudah dicetak saat praktikum.',
-      publishedAt: '2024-01-10T09:15:00Z',
-      isImportant: false,
-      attachments: ['modul-praktikum-2024.pdf']
-    },
-    {
-      id: 4,
-      title: 'Perubahan Jadwal Praktikum Kelas A1',
-      excerpt: 'Ada perubahan jadwal praktikum untuk kelas A1. Praktikum yang seharusnya dilaksanakan pada hari Senin dipindahkan ke hari Selasa.',
-      content: 'Ada perubahan jadwal praktikum untuk kelas A1. Praktikum yang seharusnya dilaksanakan pada hari Senin, 15 Januari 2024 dipindahkan ke hari Selasa, 16 Januari 2024 pada waktu yang sama. Mohon maaf atas ketidaknyamanan ini.',
-      publishedAt: '2024-01-08T16:45:00Z',
-      isImportant: true,
-      attachments: []
-    },
-    {
-      id: 5,
-      title: 'Pembukaan Pendaftaran Asisten Laboratorium',
-      excerpt: 'Pembukaan pendaftaran untuk menjadi asisten laboratorium kimia dasar. Pendaftaran dibuka hingga 25 Januari 2024.',
-      content: 'Pembukaan pendaftaran untuk menjadi asisten laboratorium kimia dasar. Syarat: mahasiswa semester 3 ke atas, IPK minimal 3.0, dan memiliki pengalaman praktikum yang baik. Pendaftaran dibuka hingga 25 Januari 2024. Kirim CV dan surat lamaran ke email labkimia@university.ac.id',
-      publishedAt: '2024-01-05T11:20:00Z',
-      isImportant: false,
-      attachments: ['syarat-asisten-lab.pdf']
+  const { addNotification } = useApp()
+  const [announcements, setAnnouncements] = useState<TransformedAnnouncement[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchAnnouncements = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const response = await api.get<Announcement[]>(endpoints.announcements.list)
+        // Transform API response to match component structure
+        const transformedAnnouncements: TransformedAnnouncement[] = (response.data || []).map((announcement) => ({
+          ...announcement,
+          isImportant: announcement.is_important || false,
+          publishedAt: announcement.published_at,
+          excerpt: announcement.content.length > 150 
+            ? announcement.content.substring(0, 150) + '...'
+            : announcement.content
+        }))
+        setAnnouncements(transformedAnnouncements)
+        
+      } catch (err) {
+        console.error('Error fetching announcements:', err)
+        setError('Failed to load announcements')
+        addNotification({
+          type: 'error',
+          title: 'Error',
+          message: 'Failed to load announcements'
+        })
+      } finally {
+        setLoading(false)
+      }
     }
-  ]
+
+    fetchAnnouncements()
+  }, [addNotification])
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -108,8 +105,32 @@ export default function PengumumanPage() {
         <section className="section-padding bg-white">
           <div className="container-custom">
             <div className="max-w-5xl mx-auto">
-              <div className="space-y-8">
-                {announcements.map((announcement) => (
+              {loading && (
+                <div className="flex justify-center items-center py-20">
+                  <LoadingSpinner />
+                </div>
+              )}
+
+              {error && !loading && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-8">
+                  <div className="flex items-center space-x-2 text-red-800">
+                    <AlertCircle className="w-5 h-5" />
+                    <p className="font-medium">{error}</p>
+                  </div>
+                </div>
+              )}
+
+              {!loading && !error && announcements.length === 0 && (
+                <div className="text-center py-20">
+                  <AlertCircle className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
+                  <p className="text-xl text-neutral-600 mb-2">Belum ada pengumuman</p>
+                  <p className="text-neutral-500">Pengumuman akan muncul di sini setelah dipublikasikan.</p>
+                </div>
+              )}
+
+              {!loading && !error && announcements.length > 0 && (
+                <div className="space-y-8">
+                  {announcements.map((announcement) => (
                   <Card
                     key={announcement.id}
                     className={`p-8 group cursor-pointer border-neutral-100 hover:shadow-xl transition-all duration-300 ${
@@ -169,23 +190,24 @@ export default function PengumumanPage() {
                       </div>
                     </div>
                   </Card>
-                ))}
-              </div>
-              
-              {/* Pagination would go here in a real app */}
-              <div className="text-center mt-16">
-                <div className="inline-flex items-center space-x-2">
-                  <Button variant="ghost" size="sm" disabled>
-                    Sebelumnya
-                  </Button>
-                  <Button variant="primary" size="sm" disabled>
-                    1
-                  </Button>
-                  <Button variant="ghost" size="sm">
-                    Selanjutnya
-                  </Button>
+                  ))}
+                  
+                  {/* Pagination would go here in a real app */}
+                  <div className="text-center mt-16">
+                    <div className="inline-flex items-center space-x-2">
+                      <Button variant="ghost" size="sm" disabled>
+                        Sebelumnya
+                      </Button>
+                      <Button variant="primary" size="sm" disabled>
+                        1
+                      </Button>
+                      <Button variant="ghost" size="sm">
+                        Selanjutnya
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </section>

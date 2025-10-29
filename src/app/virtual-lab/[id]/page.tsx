@@ -23,8 +23,8 @@ const practicums: Record<string, Practicum> = {
   "spectroscopy": { id: "spectroscopy", title: "Spektroskopi", description: "Analisis spektrum untuk mengidentifikasi gugus fungsi dan struktur molekul" }
 };
 
-export default function PracticumPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default async function PracticumPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const practicum = practicums[id as keyof typeof practicums];
 
   if (!practicum) {

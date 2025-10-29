@@ -7,70 +7,17 @@ import { Search, FileText, Calendar, BookOpen, AlertCircle } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import Badge from '../../components/ui/Badge'
+import LoadingSpinner from '../../components/ui/LoadingSpinner'
+import { useApp } from '../../contexts/AppContext'
+import { api, endpoints, Announcement, Module, SearchResult } from '../../lib/api'
 
 export default function SearchPage() {
+  const { addNotification } = useApp()
   const [searchQuery, setSearchQuery] = useState('')
-  const [searchResults, setSearchResults] = useState<any[]>([])
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [activeTab, setActiveTab] = useState('all')
-
-  // Mock search results - in real app, this would come from API
-  const mockResults = {
-    all: [
-      {
-        id: 1,
-        type: 'announcement',
-        title: 'Jadwal Praktikum Semester Genap 2024',
-        excerpt: 'Jadwal praktikum untuk semester genap 2024 telah tersedia...',
-        date: '2024-01-15',
-        url: '/pengumuman/1'
-      },
-      {
-        id: 2,
-        type: 'module',
-        title: 'Modul Praktikum Percobaan 1',
-        excerpt: 'Modul praktikum untuk percobaan 1: Pengenalan Alat dan Bahan...',
-        date: '2024-01-10',
-        url: '/praktikum'
-      },
-      {
-        id: 3,
-        type: 'announcement',
-        title: 'Pembagian Kelompok Praktikum',
-        excerpt: 'Daftar pembagian kelompok praktikum kimia dasar telah diumumkan...',
-        date: '2024-01-12',
-        url: '/pengumuman/2'
-      }
-    ],
-    announcements: [
-      {
-        id: 1,
-        type: 'announcement',
-        title: 'Jadwal Praktikum Semester Genap 2024',
-        excerpt: 'Jadwal praktikum untuk semester genap 2024 telah tersedia...',
-        date: '2024-01-15',
-        url: '/pengumuman/1'
-      },
-      {
-        id: 3,
-        type: 'announcement',
-        title: 'Pembagian Kelompok Praktikum',
-        excerpt: 'Daftar pembagian kelompok praktikum kimia dasar telah diumumkan...',
-        date: '2024-01-12',
-        url: '/pengumuman/2'
-      }
-    ],
-    modules: [
-      {
-        id: 2,
-        type: 'module',
-        title: 'Modul Praktikum Percobaan 1',
-        excerpt: 'Modul praktikum untuk percobaan 1: Pengenalan Alat dan Bahan...',
-        date: '2024-01-10',
-        url: '/praktikum'
-      }
-    ]
-  }
+  const [error, setError] = useState<string | null>(null)
 
   const handleSearch = async (query: string) => {
     if (!query.trim()) {
@@ -79,13 +26,27 @@ export default function SearchPage() {
     }
 
     setIsLoading(true)
+    setError(null)
     
-    // Simulate API call
-    setTimeout(() => {
-      const results = mockResults[activeTab as keyof typeof mockResults] || []
-      setSearchResults(results)
+    try {
+      // Make real API call to search
+      const response = await api.getWithQuery<SearchResult[]>(endpoints.search.global, {
+        q: query,
+        type: activeTab === 'all' ? undefined : activeTab
+      })
+      
+      setSearchResults(response.data || [])
+    } catch (err) {
+      console.error('Error searching:', err)
+      setError('Failed to search. Please try again.')
+      addNotification({
+        type: 'error',
+        title: 'Search Error',
+        message: 'Failed to search. Please try again.'
+      })
+    } finally {
       setIsLoading(false)
-    }, 500)
+    }
   }
 
   useEffect(() => {
@@ -126,9 +87,9 @@ export default function SearchPage() {
   }
 
   const tabs = [
-    { id: 'all', label: 'Semua', count: mockResults.all.length },
-    { id: 'announcements', label: 'Pengumuman', count: mockResults.announcements.length },
-    { id: 'modules', label: 'Modul', count: mockResults.modules.length }
+    { id: 'all', label: 'Semua', count: searchResults.length },
+    { id: 'announcements', label: 'Pengumuman', count: searchResults.filter(r => r.type === 'announcement').length },
+    { id: 'modules', label: 'Modul', count: searchResults.filter(r => r.type === 'module').length }
   ]
 
   return (
@@ -227,7 +188,7 @@ export default function SearchPage() {
                                   </Badge>
                                   <div className="flex items-center text-sm text-neutral-500">
                                     <Calendar className="w-4 h-4 mr-2" />
-                                    {formatDate(result.date)}
+                                    {formatDate(result.created_at)}
                                   </div>
                                 </div>
                                 
