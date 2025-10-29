@@ -1,5 +1,8 @@
 import { Metadata } from 'next'
 import { Calendar, Clock, AlertCircle } from 'lucide-react'
+import Card from '../../components/ui/Card'
+import Button from '../../components/ui/Button'
+import Badge from '../../components/ui/Badge'
 
 export const metadata: Metadata = {
   title: 'Pengumuman - Lab Kimia Dasar',
@@ -78,18 +81,23 @@ export default function PengumumanPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-white">
       
       <main>
         {/* Hero Section */}
-        <section className="hero-gradient section-padding">
-          <div className="container-custom">
-            <div className="text-center max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6">
+        <section className="hero-gradient relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent"></div>
+          <div className="container-custom section-padding relative">
+            <div className="text-center max-w-5xl mx-auto space-y-8">
+              <div className="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
+                <span className="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse"></span>
+                Informasi Terkini
+              </div>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-neutral-900 leading-tight tracking-tight">
                 Pengumuman
               </h1>
-              <p className="text-xl text-neutral-600 leading-relaxed">
-                Informasi terkini dari Laboratorium Kimia Dasar tentang praktikum, 
+              <p className="text-xl text-neutral-600 leading-relaxed max-w-4xl mx-auto">
+                Informasi terkini dari Laboratorium Kimia Dasar tentang praktikum,
                 jadwal, dan hal penting lainnya.
               </p>
             </div>
@@ -99,37 +107,42 @@ export default function PengumumanPage() {
         {/* Announcements List */}
         <section className="section-padding bg-white">
           <div className="container-custom">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-5xl mx-auto">
               <div className="space-y-8">
                 {announcements.map((announcement) => (
-                  <article
+                  <Card
                     key={announcement.id}
-                    className={`card p-8 hover:shadow-lg transition-all duration-200 ${
+                    className={`p-8 group cursor-pointer border-neutral-100 hover:shadow-xl transition-all duration-300 ${
                       announcement.isImportant ? 'border-l-4 border-primary-500' : ''
                     }`}
                   >
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center space-x-3">
+                    <div className="flex items-start justify-between mb-6">
+                      <div className="flex items-center space-x-4">
                         {announcement.isImportant && (
-                          <div className="flex items-center space-x-1 text-primary-600">
-                            <AlertCircle className="w-4 h-4" />
-                            <span className="text-sm font-medium">Penting</span>
+                          <div className="flex items-center space-x-2 text-primary-600">
+                            <AlertCircle className="w-5 h-5" />
+                            <Badge variant="error">Penting</Badge>
                           </div>
                         )}
-                        <div className="flex items-center text-sm text-neutral-500">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          {formatDate(announcement.publishedAt)}
-                        </div>
-                        <div className="flex items-center text-sm text-neutral-500">
-                          <Clock className="w-4 h-4 mr-1" />
-                          {formatRelativeTime(announcement.publishedAt)}
+                        <div className="flex items-center text-sm text-neutral-500 space-x-4">
+                          <div className="flex items-center">
+                            <Calendar className="w-4 h-4 mr-2" />
+                            {formatDate(announcement.publishedAt)}
+                          </div>
+                          <div className="flex items-center">
+                            <Clock className="w-4 h-4 mr-2" />
+                            {formatRelativeTime(announcement.publishedAt)}
+                          </div>
                         </div>
                       </div>
                     </div>
                     
-                    <h2 className="text-2xl font-bold text-neutral-900 mb-4 hover:text-primary-600 transition-colors duration-200">
-                      <a href={`/pengumuman/${announcement.id}`}>
+                    <h2 className="text-2xl font-bold text-neutral-900 mb-4 hover:text-primary-600 transition-colors duration-300">
+                      <a href={`/pengumuman/${announcement.id}`} className="group">
                         {announcement.title}
+                        <span className="block text-sm text-primary-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          Baca selengkapnya →
+                        </span>
                       </a>
                     </h2>
                     
@@ -139,46 +152,38 @@ export default function PengumumanPage() {
                     
                     {announcement.attachments.length > 0 && (
                       <div className="mb-6">
-                        <h4 className="text-sm font-medium text-neutral-700 mb-2">Lampiran:</h4>
+                        <h4 className="text-sm font-medium text-neutral-700 mb-3">Lampiran:</h4>
                         <div className="flex flex-wrap gap-2">
                           {announcement.attachments.map((attachment, index) => (
-                            <span
-                              key={index}
-                              className="badge-secondary text-xs"
-                            >
+                            <Badge key={index} variant="secondary" className="text-xs">
                               {attachment}
-                            </span>
+                            </Badge>
                           ))}
                         </div>
                       </div>
                     )}
                     
                     <div className="flex items-center justify-between">
-                      <a
-                        href={`/pengumuman/${announcement.id}`}
-                        className="text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200"
-                      >
-                        Baca selengkapnya →
-                      </a>
-                      
-                      <div className="text-sm text-neutral-500">
+                      <div className="text-sm text-neutral-500 font-medium">
                         ID: #{announcement.id.toString().padStart(3, '0')}
                       </div>
                     </div>
-                  </article>
+                  </Card>
                 ))}
               </div>
               
               {/* Pagination would go here in a real app */}
-              <div className="text-center mt-12">
+              <div className="text-center mt-16">
                 <div className="inline-flex items-center space-x-2">
-                  <button className="px-3 py-2 text-sm text-neutral-500 hover:text-neutral-700 disabled:opacity-50" disabled>
+                  <Button variant="ghost" size="sm" disabled>
                     Sebelumnya
-                  </button>
-                  <span className="px-3 py-2 text-sm bg-primary-100 text-primary-700 rounded">1</span>
-                  <button className="px-3 py-2 text-sm text-neutral-500 hover:text-neutral-700">
+                  </Button>
+                  <Button variant="primary" size="sm" disabled>
+                    1
+                  </Button>
+                  <Button variant="ghost" size="sm">
                     Selanjutnya
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

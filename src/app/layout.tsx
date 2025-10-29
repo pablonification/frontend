@@ -1,15 +1,15 @@
 import type { Metadata } from 'next'
-import { Manrope } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import './globals.css'
 import ConditionalLayout from '../components/layout/ConditionalLayout'
 import ErrorBoundary from '../components/ErrorBoundary'
 import { AppProvider } from '../contexts/AppContext'
 import NotificationSystem from '../components/NotificationSystem'
 
-const manrope = Manrope({
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-manrope',
+  variable: '--font-inter',
 })
 
 export const metadata: Metadata = {
@@ -31,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="id" className={manrope.variable}>
+    <html lang="id" className={inter.variable}>
       <body className="font-sans antialiased">
         <ErrorBoundary>
           <AppProvider>

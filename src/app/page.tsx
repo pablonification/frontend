@@ -39,28 +39,28 @@ export default function HomePage() {
       description: 'Download modul praktikum terbaru',
       icon: BookOpen,
       href: '/praktikum',
-      color: 'bg-blue-500'
+      color: 'bg-primary-500'
     },
     {
       title: 'Jadwal Praktikum',
       description: 'Lihat jadwal praktikum Anda',
       icon: Calendar,
       href: '/praktikum',
-      color: 'bg-green-500'
+      color: 'bg-emerald-500'
     },
     {
       title: 'Pengumuman',
       description: 'Informasi terbaru dari lab',
       icon: FileText,
       href: '/pengumuman',
-      color: 'bg-orange-500'
+      color: 'bg-amber-500'
     },
     {
       title: 'Nilai Praktikum',
       description: 'Cek nilai praktikum Anda',
       icon: Award,
       href: '/praktikum',
-      color: 'bg-purple-500'
+      color: 'bg-violet-500'
     }
   ]
 
@@ -125,10 +125,10 @@ export default function HomePage() {
     return <LoadingSpinner.Page message="Memuat halaman utama..." />
   }
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white">
       {error && (
-        <div className="container-custom py-4">
-          <ErrorAlert 
+        <div className="container-custom py-6">
+          <ErrorAlert
             message={error}
             onDismiss={() => setError(null)}
           />
@@ -136,24 +136,29 @@ export default function HomePage() {
       )}
       
       {/* Hero Section */}
-      <section className="hero-gradient">
-        <div className="container-custom section-padding">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <section className="hero-gradient relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent"></div>
+        <div className="container-custom section-padding relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
-              <div className="space-y-4">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 leading-tight">
+              <div className="space-y-6">
+                <div className="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
+                  <span className="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse"></span>
+                  Platform Praktikum Modern
+                </div>
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-neutral-900 leading-tight tracking-tight">
                   Laboratorium{' '}
                   <span className="gradient-text">Kimia Dasar</span>
                 </h1>
-                <p className="text-xl text-neutral-600 leading-relaxed">
-                  Fasilitas terbaik untuk pembelajaran praktikum kimia dasar 
+                <p className="text-xl text-neutral-600 leading-relaxed max-w-lg">
+                  Fasilitas terbaik untuk pembelajaran praktikum kimia dasar
                   dengan teknologi modern dan pengajar berpengalaman.
                 </p>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/praktikum">
-                  <Button size="lg" className="w-full sm:w-auto">
+                  <Button size="lg" className="w-full sm:w-auto shadow-lg">
                     Mulai Praktikum
                     <ChevronRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -166,17 +171,20 @@ export default function HomePage() {
             </div>
             
             <div className="relative">
-              <div className="aspect-square bg-gradient-to-br from-primary-100 to-primary-200 rounded-2xl flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <div className="w-24 h-24 bg-primary-500 rounded-full flex items-center justify-center mx-auto">
-                    <BookOpen className="h-12 w-12 text-white" />
+              <div className="aspect-square bg-gradient-to-br from-primary-100 via-primary-50 to-white rounded-3xl flex items-center justify-center shadow-xl border border-primary-100 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-tr from-transparent to-white/20"></div>
+                <div className="text-center space-y-6 relative z-10">
+                  <div className="w-32 h-32 bg-primary-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                    <BookOpen className="h-16 w-16 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-primary-700">
-                    Praktikum Online
-                  </h3>
-                  <p className="text-primary-600">
-                    Akses mudah dan terintegrasi
-                  </p>
+                  <div className="space-y-2">
+                    <h3 className="text-2xl font-bold text-primary-700">
+                      Praktikum Online
+                    </h3>
+                    <p className="text-primary-600">
+                      Akses mudah dan terintegrasi
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -185,28 +193,28 @@ export default function HomePage() {
       </section>
 
       {/* Quick Access Section */}
-      <section className="py-16 bg-white">
+      <section className="section-padding bg-white">
         <div className="container-custom">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
               Akses Cepat
             </h2>
-            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
-              Semua yang Anda butuhkan untuk praktikum kimia dasar dalam satu tempat
+            <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
+              Semua yang Anda butuhkan untuk praktikum kimia dasar dalam satu platform terintegrasi
             </p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {quickAccessItems.map((item, index) => (
               <Link key={index} href={item.href}>
-                <Card className="p-6 text-center hover:shadow-lg transition-all duration-200 group cursor-pointer">
-                  <div className={`w-16 h-16 ${item.color} rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-200`}>
-                    <item.icon className="h-8 w-8 text-white" />
+                <Card className="p-8 text-center group cursor-pointer border-neutral-100">
+                  <div className={`w-20 h-20 ${item.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 group-hover:shadow-lg`}>
+                    <item.icon className="h-10 w-10 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                  <h3 className="text-xl font-semibold text-neutral-900 mb-3">
                     {item.title}
                   </h3>
-                  <p className="text-neutral-600 text-sm">
+                  <p className="text-neutral-600 leading-relaxed">
                     {item.description}
                   </p>
                 </Card>
@@ -217,58 +225,67 @@ export default function HomePage() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-neutral-50">
+      <section className="section-padding bg-neutral-50">
         <div className="container-custom">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
+              Dalam Angka
+            </h2>
+            <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
+              Prestasi dan pencapaian Laboratorium Kimia Dasar
+            </p>
+          </div>
+          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="h-8 w-8 text-primary-600" />
+              <div className="w-20 h-20 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Users className="h-10 w-10 text-primary-600" />
               </div>
-              <div className="text-3xl font-bold text-neutral-900 mb-2">
+              <div className="text-4xl font-bold text-neutral-900 mb-2">
                 {stats.totalStudents?.toLocaleString() || '1,200'}
               </div>
-              <p className="text-neutral-600">Mahasiswa Aktif</p>
+              <p className="text-neutral-600 font-medium">Mahasiswa Aktif</p>
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BookOpen className="h-8 w-8 text-green-600" />
+              <div className="w-20 h-20 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <BookOpen className="h-10 w-10 text-emerald-600" />
               </div>
-              <div className="text-3xl font-bold text-neutral-900 mb-2">
+              <div className="text-4xl font-bold text-neutral-900 mb-2">
                 {stats.totalModules || '24'}
               </div>
-              <p className="text-neutral-600">Modul Praktikum</p>
+              <p className="text-neutral-600 font-medium">Modul Praktikum</p>
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <FileText className="h-8 w-8 text-orange-600" />
+              <div className="w-20 h-20 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <FileText className="h-10 w-10 text-amber-600" />
               </div>
-              <div className="text-3xl font-bold text-neutral-900 mb-2">
+              <div className="text-4xl font-bold text-neutral-900 mb-2">
                 {stats.totalAnnouncements || '15'}
               </div>
-              <p className="text-neutral-600">Pengumuman</p>
+              <p className="text-neutral-600 font-medium">Pengumuman</p>
             </div>
             
             <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingUp className="h-8 w-8 text-purple-600" />
+              <div className="w-20 h-20 bg-violet-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <TrendingUp className="h-10 w-10 text-violet-600" />
               </div>
-              <div className="text-3xl font-bold text-neutral-900 mb-2">
+              <div className="text-4xl font-bold text-neutral-900 mb-2">
                 {stats.totalDownloads?.toLocaleString() || '3,500'}
               </div>
-              <p className="text-neutral-600">Total Download</p>
+              <p className="text-neutral-600 font-medium">Total Download</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Latest Announcements */}
-      <section className="py-16 bg-white">
+      <section className="section-padding bg-white">
         <div className="container-custom">
-          <div className="flex items-center justify-between mb-12">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-16 gap-6">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
+              <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">
                 Pengumuman Terbaru
               </h2>
               <p className="text-xl text-neutral-600">
@@ -276,40 +293,40 @@ export default function HomePage() {
               </p>
             </div>
             <Link href="/pengumuman">
-              <Button variant="secondary">
+              <Button variant="secondary" size="lg" className="shadow-md">
                 Lihat Semua
-                <ChevronRight className="ml-2 h-4 w-4" />
+                <ChevronRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {announcements.map((announcement) => (
-              <Card key={announcement.id} className="p-6 hover:shadow-lg transition-shadow duration-200">
-                <div className="flex items-start justify-between mb-4">
+              <Card key={announcement.id} className="p-8 group cursor-pointer border-neutral-100">
+                <div className="flex items-start justify-between mb-6">
                   <span className={`badge ${getCategoryColor(announcement.category)}`}>
                     {getCategoryText(announcement.category)}
                   </span>
                   <span className="text-sm text-neutral-500 flex items-center">
-                    <Clock className="h-4 w-4 mr-1" />
+                    <Clock className="h-4 w-4 mr-2" />
                     {new Date(announcement.publishedAt).toLocaleDateString('id-ID')}
                   </span>
                 </div>
                 
-                <h3 className="text-lg font-semibold text-neutral-900 mb-3 line-clamp-2">
+                <h3 className="text-xl font-semibold text-neutral-900 mb-4 line-clamp-2 group-hover:text-primary-600 transition-colors">
                   {announcement.title}
                 </h3>
                 
-                <p className="text-neutral-600 text-sm mb-4 line-clamp-3">
+                <p className="text-neutral-600 leading-relaxed mb-6 line-clamp-3">
                   {announcement.excerpt}
                 </p>
                 
-                <Link 
+                <Link
                   href={`/pengumuman/${announcement.id}`}
                   className="text-primary-600 hover:text-primary-700 font-medium text-sm flex items-center group"
                 >
                   Baca selengkapnya
-                  <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                  <ChevronRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Card>
             ))}
@@ -318,27 +335,30 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-primary-500">
-        <div className="container-custom text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Siap Memulai Praktikum?
-          </h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
-            Bergabunglah dengan ribuan mahasiswa yang telah merasakan pengalaman 
-            praktikum terbaik di Laboratorium Kimia Dasar ITB.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/praktikum">
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto">
-                Mulai Sekarang
-                <ChevronRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Link href="/kontak">
-              <Button size="lg" variant="ghost" className="w-full sm:w-auto text-white border-white hover:bg-white hover:text-primary-600">
-                Hubungi Kami
-              </Button>
-            </Link>
+      <section className="section-padding bg-gradient-to-r from-primary-500 to-primary-600 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-700"></div>
+        <div className="container-custom text-center relative">
+          <div className="max-w-4xl mx-auto space-y-8">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Siap Memulai Praktikum?
+            </h2>
+            <p className="text-xl text-primary-100 leading-relaxed max-w-3xl mx-auto">
+              Bergabunglah dengan ribuan mahasiswa yang telah merasakan pengalaman
+              praktikum terbaik di Laboratorium Kimia Dasar ITB.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <Link href="/praktikum">
+                <Button size="lg" variant="secondary" className="w-full sm:w-auto shadow-xl">
+                  Mulai Sekarang
+                  <ChevronRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="/kontak">
+                <Button size="lg" variant="ghost" className="w-full sm:w-auto text-white border-white hover:bg-white hover:text-primary-600">
+                  Hubungi Kami
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>

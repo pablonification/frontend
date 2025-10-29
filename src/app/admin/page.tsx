@@ -56,10 +56,11 @@ export default function AdminDashboard() {
 
       } catch (err) {
         console.error('Error fetching dashboard stats:', err)
-        setError('Failed to load dashboard statistics')
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load dashboard statistics'
+        setError(errorMessage)
         addNotification({
           type: 'error',
-          message: 'Failed to load dashboard statistics'
+          message: errorMessage
         })
       } finally {
         setLoading(false)
@@ -75,35 +76,35 @@ export default function AdminDashboard() {
       description: 'Buat dan edit pengumuman',
       icon: FileText,
       href: '/admin/announcements',
-      color: 'bg-blue-500'
+      color: 'bg-primary-500'
     },
     {
       title: 'Kelola Slider',
       description: 'Atur slider homepage',
       icon: Image,
       href: '/admin/sliders',
-      color: 'bg-green-500'
+      color: 'bg-emerald-500'
     },
     {
       title: 'Kelola File',
       description: 'Upload dan kelola file',
       icon: FileText,
       href: '/admin/files',
-      color: 'bg-orange-500'
+      color: 'bg-amber-500'
     },
     {
       title: 'Kelola Modul',
       description: 'Kelola modul praktikum',
       icon: BookOpen,
       href: '/admin/modules',
-      color: 'bg-purple-500'
+      color: 'bg-violet-500'
     },
     {
       title: 'Kelola Nilai',
       description: 'Upload file nilai',
       icon: Award,
       href: '/admin/nilai',
-      color: 'bg-red-500'
+      color: 'bg-rose-500'
     }
   ]
 
@@ -128,111 +129,112 @@ export default function AdminDashboard() {
 
   return (
     <div className="p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-neutral-900 mb-2">
+        <div className="mb-12">
+          <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-4">
             Dashboard Admin
           </h1>
-          <p className="text-neutral-600">
+          <p className="text-xl text-neutral-600">
             Kelola konten dan file website Lab Kimia Dasar
           </p>
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-          <Card className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
+          <Card className="p-8 border-neutral-100">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <FileText className="w-6 h-6 text-blue-600" />
+              <div className="w-16 h-16 bg-primary-100 rounded-2xl flex items-center justify-center">
+                <FileText className="w-8 h-8 text-primary-600" />
               </div>
-              <div className="ml-4">
-                <p className="text-2xl font-bold text-neutral-900">
+              <div className="ml-6">
+                <p className="text-3xl font-bold text-neutral-900">
                   {stats.totalAnnouncements}
                 </p>
-                <p className="text-sm text-neutral-600">Pengumuman</p>
+                <p className="text-sm text-neutral-600 font-medium">Pengumuman</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="p-8 border-neutral-100">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <Image className="w-6 h-6 text-green-600" />
+              <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                <Image className="w-8 h-8 text-emerald-600" />
               </div>
-              <div className="ml-4">
-                <p className="text-2xl font-bold text-neutral-900">
+              <div className="ml-6">
+                <p className="text-3xl font-bold text-neutral-900">
                   {stats.totalSliders}
                 </p>
-                <p className="text-sm text-neutral-600">Slider</p>
+                <p className="text-sm text-neutral-600 font-medium">Slider</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="p-8 border-neutral-100">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <FileText className="w-6 h-6 text-orange-600" />
+              <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center">
+                <FileText className="w-8 h-8 text-amber-600" />
               </div>
-              <div className="ml-4">
-                <p className="text-2xl font-bold text-neutral-900">
+              <div className="ml-6">
+                <p className="text-3xl font-bold text-neutral-900">
                   {stats.totalFiles}
                 </p>
-                <p className="text-sm text-neutral-600">File</p>
+                <p className="text-sm text-neutral-600 font-medium">File</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="p-8 border-neutral-100">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-6 h-6 text-purple-600" />
+              <div className="w-16 h-16 bg-violet-100 rounded-2xl flex items-center justify-center">
+                <BookOpen className="w-8 h-8 text-violet-600" />
               </div>
-              <div className="ml-4">
-                <p className="text-2xl font-bold text-neutral-900">
+              <div className="ml-6">
+                <p className="text-3xl font-bold text-neutral-900">
                   {stats.totalModules}
                 </p>
-                <p className="text-sm text-neutral-600">Modul</p>
+                <p className="text-sm text-neutral-600 font-medium">Modul</p>
               </div>
             </div>
           </Card>
 
-          <Card className="p-6">
+          <Card className="p-8 border-neutral-100">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                <Award className="w-6 h-6 text-red-600" />
+              <div className="w-16 h-16 bg-rose-100 rounded-2xl flex items-center justify-center">
+                <Award className="w-8 h-8 text-rose-600" />
               </div>
-              <div className="ml-4">
-                <p className="text-2xl font-bold text-neutral-900">
+              <div className="ml-6">
+                <p className="text-3xl font-bold text-neutral-900">
                   {stats.totalNilai}
                 </p>
-                <p className="text-sm text-neutral-600">File Nilai</p>
+                <p className="text-sm text-neutral-600 font-medium">File Nilai</p>
               </div>
             </div>
           </Card>
         </div>
 
         {/* Quick Actions */}
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-neutral-900 mb-6">
+        <div className="mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-8">
             Aksi Cepat
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {quickActions.map((action, index) => (
-              <Card key={index} className="p-6 hover:shadow-lg transition-all duration-200 group cursor-pointer">
-                <div className="flex items-start space-x-4">
-                  <div className={`w-12 h-12 ${action.color} rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200`}>
-                    <action.icon className="w-6 h-6 text-white" />
+              <Card key={index} className="p-8 hover:shadow-xl transition-all duration-300 group cursor-pointer border-neutral-100">
+                <div className="flex items-start space-x-6">
+                  <div className={`w-16 h-16 ${action.color} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 group-hover:shadow-lg`}>
+                    <action.icon className="w-8 h-8 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+                    <h3 className="text-xl font-semibold text-neutral-900 mb-3 group-hover:text-primary-600 transition-colors duration-300">
                       {action.title}
                     </h3>
-                    <p className="text-neutral-600 text-sm mb-4">
+                    <p className="text-neutral-600 leading-relaxed mb-6">
                       {action.description}
                     </p>
                     <Button
                       variant="secondary"
-                      size="sm"
+                      size="md"
                       onClick={() => router.push(action.href)}
+                      className="shadow-md hover:shadow-lg"
                     >
                       Kelola
                     </Button>
@@ -244,44 +246,44 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Activity */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-neutral-900 mb-4">
+        <Card className="p-8 border-neutral-100">
+          <h3 className="text-2xl font-semibold text-neutral-900 mb-8">
             Aktivitas Terbaru
           </h3>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <FileText className="w-4 h-4 text-blue-600" />
+          <div className="space-y-6">
+            <div className="flex items-center space-x-4 p-4 rounded-xl hover:bg-neutral-50 transition-colors duration-300">
+              <div className="w-12 h-12 bg-primary-100 rounded-2xl flex items-center justify-center">
+                <FileText className="w-6 h-6 text-primary-600" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-neutral-900">
+                <p className="text-base text-neutral-900 font-medium">
                   Pengumuman baru "Jadwal Praktikum Semester Ganjil" telah dibuat
                 </p>
-                <p className="text-xs text-neutral-500">2 jam yang lalu</p>
+                <p className="text-sm text-neutral-500">2 jam yang lalu</p>
               </div>
             </div>
             
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <Image className="w-4 h-4 text-green-600" />
+            <div className="flex items-center space-x-4 p-4 rounded-xl hover:bg-neutral-50 transition-colors duration-300">
+              <div className="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                <Image className="w-6 h-6 text-emerald-600" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-neutral-900">
+                <p className="text-base text-neutral-900 font-medium">
                   Slider "Praktikum Online" telah diperbarui
                 </p>
-                <p className="text-xs text-neutral-500">4 jam yang lalu</p>
+                <p className="text-sm text-neutral-500">4 jam yang lalu</p>
               </div>
             </div>
             
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                <FileText className="w-4 h-4 text-orange-600" />
+            <div className="flex items-center space-x-4 p-4 rounded-xl hover:bg-neutral-50 transition-colors duration-300">
+              <div className="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center">
+                <FileText className="w-6 h-6 text-amber-600" />
               </div>
               <div className="flex-1">
-                <p className="text-sm text-neutral-900">
+                <p className="text-base text-neutral-900 font-medium">
                   File "Modul Praktikum 1.pdf" telah diupload
                 </p>
-                <p className="text-xs text-neutral-500">1 hari yang lalu</p>
+                <p className="text-sm text-neutral-500">1 hari yang lalu</p>
               </div>
             </div>
           </div>
