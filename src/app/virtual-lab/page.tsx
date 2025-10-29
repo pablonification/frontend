@@ -3,6 +3,12 @@ import { Beaker, FlaskConical, TestTube, ArrowRight } from "lucide-react";
 import React from "react";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
+import { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Virtual Lab - Lab Kimia Dasar',
+  description: 'Simulasi Praktikum Interaktif - Lakukan eksperimen kimia secara virtual dengan visualisasi realistis.',
+}
 
 const practicums = [
   {
@@ -103,39 +109,43 @@ const practicums = [
   }
 ];
 
-export default function PracticumCatalog() {
+export default function VirtualLabPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-primary-500 to-primary-600 text-white py-20 px-6 shadow-xl relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-700"></div>
-        <div className="max-w-6xl mx-auto relative">
-          <div className="flex items-center gap-6 mb-6">
-            <div className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-              <Beaker className="w-12 h-12 animate-pulse" />
-            </div>
-            <div>
-              <h1 className="text-5xl md:text-6xl font-bold mb-3">Virtual Lab Kimia</h1>
-              <p className="text-xl text-primary-100">Simulasi Praktikum Interaktif</p>
+      
+      <main>
+        {/* Hero Section */}
+        <section className="hero-gradient relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent"></div>
+          <div className="container-custom section-padding relative">
+            <div className="text-center max-w-5xl mx-auto space-y-8">
+              <div className="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
+                <span className="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse"></span>
+                Simulasi Praktikum Interaktif
+              </div>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-neutral-900 leading-tight tracking-tight">
+                Virtual Lab{' '}
+                <span className="gradient-text">Kimia</span>
+              </h1>
+              <p className="text-xl text-neutral-600 leading-relaxed max-w-4xl mx-auto text-balance">
+                Lakukan eksperimen kimia secara virtual dengan visualisasi realistis.
+                Aman, interaktif, dan menyenangkan!
+              </p>
             </div>
           </div>
-          <p className="text-lg text-primary-100 leading-relaxed max-w-3xl">
-            Lakukan eksperimen kimia secara virtual dengan visualisasi realistis.
-            Aman, interaktif, dan menyenangkan! 🧪✨
-          </p>
-        </div>
-      </div>
+        </section>
 
-      {/* Practicum Cards */}
-      <div className="max-w-7xl mx-auto py-20 px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">Pilih Praktikum</h2>
-          <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
-            Pilih dari berbagai simulasi praktikum kimia yang tersedia
-          </p>
-        </div>
+        {/* Practicum Cards */}
+        <section className="section-padding bg-white">
+          <div className="container-custom">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">Pilih Praktikum</h2>
+              <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
+                Pilih dari berbagai simulasi praktikum kimia yang tersedia
+              </p>
+            </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {practicums.map((practicum) => {
             const Icon = practicum.icon;
             return (
@@ -174,9 +184,11 @@ export default function PracticumCatalog() {
                 </Card>
               </Link>
             );
-          })}
-        </div>
-      </div>
+            })}
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
