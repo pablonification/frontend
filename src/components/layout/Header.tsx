@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X, Search } from 'lucide-react'
+import Image from 'next/image'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -18,15 +19,13 @@ export default function Header() {
   ]
 
   return (
-    <header className="bg-white/80 backdrop-blur-sm border-b border-neutral-100 sticky top-0 z-50">
+    <header className="bg-white/60 backdrop-blur-sm border-b border-neutral-100 sticky top-0 z-50">
       <div className="container-custom">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:-translate-y-0.5">
-                <span className="text-white font-bold text-lg">L</span>
-              </div>
+              <Image src="/logo_itb2.png" alt="Lab Kimia Dasar" width={55} height={55} />
               <span className="text-xl font-bold text-neutral-900 group-hover:text-primary-600 transition-colors duration-300">
                 Lab Kimia Dasar
               </span>

@@ -240,7 +240,7 @@ export default function KontakPage() {
                 </a>
                 <a
                   href="mailto:labkimia@university.ac.id"
-                  className="inline-flex items-center px-8 py-4 bg-primary-500/20 backdrop-blur-sm text-white hover:bg-primary-500/30 text-lg font-medium rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-white/20"
+                  className="inline-flex items-center px-8 py-4 bg-primary-500/20 backdrop-blur-sm text-white hover:bg-primary-500/30 hover:text-primary-400 text-lg font-medium rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-white/20"
                 >
                   <Mail className="w-5 h-5 mr-2" />
                   Kirim Email
