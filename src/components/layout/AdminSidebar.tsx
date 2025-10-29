@@ -3,11 +3,11 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Image, 
-  BookOpen, 
+import {
+  LayoutDashboard,
+  FileText,
+  Image,
+  BookOpen,
   Award,
   Settings,
   LogOut,
@@ -62,15 +62,15 @@ export default function AdminSidebar() {
   }
 
   return (
-    <div className={`bg-white border-r border-neutral-200 h-screen flex flex-col transition-all duration-300 ${
-      isCollapsed ? 'w-16' : 'w-64'
+    <div className={`bg-white border-r border-neutral-100 min-h-screen flex flex-col transition-all duration-300 ${
+      isCollapsed ? 'w-20' : 'w-72'
     }`}>
       {/* Header */}
-      <div className="p-4 border-b border-neutral-200">
+      <div className="p-6 border-b border-neutral-100">
         <div className="flex items-center justify-between">
           {!isCollapsed && (
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center shadow-sm">
                 <span className="text-white font-bold text-lg">A</span>
               </div>
               <span className="text-lg font-bold text-neutral-900">
@@ -80,7 +80,7 @@ export default function AdminSidebar() {
           )}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="p-1.5 text-neutral-600 hover:text-primary-600 hover:bg-neutral-100 rounded-md transition-colors duration-200"
+            className="p-2.5 text-neutral-600 hover:text-primary-600 hover:bg-neutral-50 rounded-xl transition-all duration-300 hover:-translate-y-0.5"
           >
             {isCollapsed ? <Menu className="w-5 h-5" /> : <X className="w-5 h-5" />}
           </button>
@@ -97,10 +97,10 @@ export default function AdminSidebar() {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
+              className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-300 group ${
                 active
-                  ? 'bg-primary-50 text-primary-700 border border-primary-200'
-                  : 'text-neutral-600 hover:text-primary-600 hover:bg-neutral-50'
+                  ? 'bg-primary-50 text-primary-700 border border-primary-200 shadow-sm'
+                  : 'text-neutral-600 hover:text-primary-600 hover:bg-neutral-50 hover:shadow-sm'
               }`}
             >
               <Icon className={`w-5 h-5 flex-shrink-0 ${
@@ -115,11 +115,11 @@ export default function AdminSidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-4 border-t border-neutral-200 space-y-2">
+      <div className="p-4 border-t border-neutral-100 space-y-2">
         {/* Back to Website */}
         <Link
           href="/"
-          className="flex items-center space-x-3 px-3 py-2.5 text-neutral-600 hover:text-primary-600 hover:bg-neutral-50 rounded-lg transition-all duration-200 group"
+          className="flex items-center space-x-3 px-4 py-3 text-neutral-600 hover:text-primary-600 hover:bg-neutral-50 rounded-xl transition-all duration-300 group hover:shadow-sm"
         >
           <Home className="w-5 h-5 text-neutral-500 group-hover:text-primary-600" />
           {!isCollapsed && (
@@ -128,7 +128,7 @@ export default function AdminSidebar() {
         </Link>
 
         {/* Logout */}
-        <button className="w-full flex items-center space-x-3 px-3 py-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200 group">
+        <button className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-all duration-300 group hover:shadow-sm">
           <LogOut className="w-5 h-5 text-red-500 group-hover:text-red-600" />
           {!isCollapsed && (
             <span className="font-medium">Keluar</span>

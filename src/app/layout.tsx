@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Manrope } from 'next/font/google'
+import { Manrope, Instrument_Serif } from 'next/font/google'
 import './globals.css'
 import ConditionalLayout from '../components/layout/ConditionalLayout'
 import ErrorBoundary from '../components/ErrorBoundary'
@@ -10,6 +10,13 @@ const manrope = Manrope({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-manrope',
+})
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-instrument-serif',
+  weight: '400',
 })
 
 export const metadata: Metadata = {
@@ -31,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="id" className={manrope.variable}>
+    <html lang="id" className={`${manrope.variable} ${instrumentSerif.variable}`}>
       <body className="font-sans antialiased">
         <ErrorBoundary>
           <AppProvider>

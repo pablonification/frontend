@@ -1,5 +1,7 @@
 import { Metadata } from 'next'
 import { BookOpen, Calendar, Users, Download, FileText } from 'lucide-react'
+import Card from '../../components/ui/Card'
+import Button from '../../components/ui/Button'
 
 export const metadata: Metadata = {
   title: 'Praktikum - Lab Kimia Dasar',
@@ -57,17 +59,23 @@ export default function PraktikumPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-white">
       
       <main>
         {/* Hero Section */}
-        <section className="hero-gradient section-padding">
-          <div className="container-custom">
-            <div className="text-center max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6">
+        <section className="hero-gradient relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent"></div>
+          <div className="container-custom section-padding relative">
+            <div className="text-center max-w-5xl mx-auto space-y-8">
+              <div className="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
+                <span className="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse"></span>
                 Pusat Informasi Praktikum
+              </div>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-neutral-900 leading-tight tracking-tight">
+                Pusat Informasi{' '}
+                <span className="gradient-text">Praktikum</span>
               </h1>
-              <p className="text-xl text-neutral-600 leading-relaxed">
+              <p className="text-xl text-neutral-600 leading-relaxed max-w-4xl mx-auto">
                 Akses modul praktikum, jadwal, dan pembagian kelompok untuk praktikum kimia dasar.
               </p>
             </div>
@@ -77,27 +85,27 @@ export default function PraktikumPage() {
         {/* Quick Stats */}
         <section className="section-padding bg-white">
           <div className="container-custom">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
               <div className="text-center">
-                <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BookOpen className="w-8 h-8 text-primary-600" />
+                <div className="bg-primary-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <BookOpen className="w-10 h-10 text-primary-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-neutral-900 mb-2">5 Modul</h3>
-                <p className="text-neutral-600">Praktikum tersedia</p>
+                <h3 className="text-3xl font-bold text-neutral-900 mb-2">5 Modul</h3>
+                <p className="text-neutral-600 font-medium">Praktikum tersedia</p>
               </div>
               <div className="text-center">
-                <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Calendar className="w-8 h-8 text-blue-600" />
+                <div className="bg-emerald-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Calendar className="w-10 h-10 text-emerald-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-neutral-900 mb-2">8 Sesi</h3>
-                <p className="text-neutral-600">Per minggu</p>
+                <h3 className="text-3xl font-bold text-neutral-900 mb-2">8 Sesi</h3>
+                <p className="text-neutral-600 font-medium">Per minggu</p>
               </div>
               <div className="text-center">
-                <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-8 h-8 text-green-600" />
+                <div className="bg-amber-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Users className="w-10 h-10 text-amber-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-neutral-900 mb-2">16 Kelompok</h3>
-                <p className="text-neutral-600">Mahasiswa aktif</p>
+                <h3 className="text-3xl font-bold text-neutral-900 mb-2">16 Kelompok</h3>
+                <p className="text-neutral-600 font-medium">Mahasiswa aktif</p>
               </div>
             </div>
           </div>
@@ -106,40 +114,42 @@ export default function PraktikumPage() {
         {/* Modules Section */}
         <section className="section-padding bg-neutral-50" id="modules">
           <div className="container-custom">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
                 Modul Praktikum
               </h2>
-              <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
-                Download modul praktikum untuk setiap percobaan. Pastikan Anda memiliki 
+              <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
+                Download modul praktikum untuk setiap percobaan. Pastikan Anda memiliki
                 modul terbaru sebelum praktikum dimulai.
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {modules.map((module) => (
-                <div key={module.id} className="card p-6 hover:shadow-lg transition-all duration-200">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center space-x-2">
-                      <FileText className="w-5 h-5 text-primary-600" />
-                      <span className="text-sm text-neutral-500">{module.fileSize}</span>
+                <Card key={module.id} className="p-8 group cursor-pointer border-neutral-100">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-primary-600" />
+                      </div>
+                      <span className="text-sm text-neutral-500 font-medium">{module.fileSize}</span>
                     </div>
                     <span className="badge-primary">{module.downloadCount} downloads</span>
                   </div>
                   
-                  <h3 className="text-lg font-semibold text-neutral-900 mb-3">
+                  <h3 className="text-xl font-semibold text-neutral-900 mb-4 group-hover:text-primary-600 transition-colors duration-300">
                     {module.title}
                   </h3>
                   
-                  <p className="text-neutral-600 mb-4 text-sm leading-relaxed">
+                  <p className="text-neutral-600 mb-6 leading-relaxed">
                     {module.description}
                   </p>
                   
-                  <button className="btn-primary w-full flex items-center justify-center space-x-2">
-                    <Download className="w-4 h-4" />
-                    <span>Download Modul</span>
-                  </button>
-                </div>
+                  <Button className="w-full shadow-md hover:shadow-lg">
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Modul
+                  </Button>
+                </Card>
               ))}
             </div>
           </div>
@@ -148,46 +158,46 @@ export default function PraktikumPage() {
         {/* Schedule Section */}
         <section className="section-padding bg-white" id="jadwal">
           <div className="container-custom">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
                 Jadwal Praktikum
               </h2>
-              <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+              <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
                 Jadwal praktikum untuk semester genap 2024. Pastikan Anda hadir tepat waktu.
               </p>
             </div>
             
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto rounded-2xl border border-neutral-200 shadow-sm">
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-primary-50">
-                    <th className="border border-neutral-200 px-4 py-3 text-left font-semibold text-neutral-900">
+                    <th className="border border-neutral-200 px-6 py-4 text-left font-semibold text-neutral-900">
                       Hari
                     </th>
-                    <th className="border border-neutral-200 px-4 py-3 text-left font-semibold text-neutral-900">
+                    <th className="border border-neutral-200 px-6 py-4 text-left font-semibold text-neutral-900">
                       Waktu
                     </th>
-                    <th className="border border-neutral-200 px-4 py-3 text-left font-semibold text-neutral-900">
+                    <th className="border border-neutral-200 px-6 py-4 text-left font-semibold text-neutral-900">
                       Kelas
                     </th>
-                    <th className="border border-neutral-200 px-4 py-3 text-left font-semibold text-neutral-900">
+                    <th className="border border-neutral-200 px-6 py-4 text-left font-semibold text-neutral-900">
                       Ruang
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {schedule.map((item, index) => (
-                    <tr key={index} className="hover:bg-neutral-50">
-                      <td className="border border-neutral-200 px-4 py-3 text-neutral-700">
+                    <tr key={index} className="hover:bg-neutral-50 transition-colors duration-200">
+                      <td className="border border-neutral-200 px-6 py-4 text-neutral-700 font-medium">
                         {item.day}
                       </td>
-                      <td className="border border-neutral-200 px-4 py-3 text-neutral-700">
+                      <td className="border border-neutral-200 px-6 py-4 text-neutral-700">
                         {item.time}
                       </td>
-                      <td className="border border-neutral-200 px-4 py-3 text-neutral-700">
+                      <td className="border border-neutral-200 px-6 py-4 text-neutral-700">
                         {item.class}
                       </td>
-                      <td className="border border-neutral-200 px-4 py-3 text-neutral-700">
+                      <td className="border border-neutral-200 px-6 py-4 text-neutral-700">
                         {item.room}
                       </td>
                     </tr>
@@ -201,30 +211,30 @@ export default function PraktikumPage() {
         {/* Groups Section */}
         <section className="section-padding bg-neutral-50" id="kelompok">
           <div className="container-custom">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-4">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
                 Pembagian Kelompok
               </h2>
-              <p className="text-lg text-neutral-600 max-w-2xl mx-auto">
+              <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
                 Lihat pembagian kelompok praktikum. Pastikan Anda mengetahui kelompok Anda.
               </p>
             </div>
             
-            <div className="card p-8 text-center">
-              <div className="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-primary-600" />
+            <Card className="p-10 text-center border-neutral-100">
+              <div className="bg-primary-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <Users className="w-10 h-10 text-primary-600" />
               </div>
-              <h3 className="text-xl font-semibold text-neutral-900 mb-4">
+              <h3 className="text-2xl font-semibold text-neutral-900 mb-6">
                 File Pembagian Kelompok
               </h3>
-              <p className="text-neutral-600 mb-6">
+              <p className="text-neutral-600 mb-8 leading-relaxed max-w-md mx-auto">
                 Download file pembagian kelompok untuk melihat kelompok praktikum Anda.
               </p>
-              <button className="btn-primary flex items-center space-x-2 mx-auto">
-                <Download className="w-4 h-4" />
-                <span>Download Pembagian Kelompok</span>
-              </button>
-            </div>
+              <Button className="shadow-lg hover:shadow-xl">
+                <Download className="w-4 h-4 mr-2" />
+                Download Pembagian Kelompok
+              </Button>
+            </Card>
           </div>
         </section>
       </main>

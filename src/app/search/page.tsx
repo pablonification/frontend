@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react'
 import { Metadata } from 'next'
 import Footer from '../../components/layout/Footer'
 import { Search, FileText, Calendar, BookOpen, AlertCircle } from 'lucide-react'
+import Card from '../../components/ui/Card'
+import Button from '../../components/ui/Button'
+import Badge from '../../components/ui/Badge'
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('')
@@ -129,30 +132,35 @@ export default function SearchPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-white">
       
       <main>
         {/* Hero Section */}
-        <section className="hero-gradient section-padding">
-          <div className="container-custom">
-            <div className="text-center max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6">
+        <section className="hero-gradient relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent"></div>
+          <div className="container-custom section-padding relative">
+            <div className="text-center max-w-5xl mx-auto space-y-8">
+              <div className="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
+                <span className="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse"></span>
+                Pencarian
+              </div>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-neutral-900 leading-tight tracking-tight">
                 Pencarian
               </h1>
-              <p className="text-xl text-neutral-600 leading-relaxed mb-8">
+              <p className="text-xl text-neutral-600 leading-relaxed max-w-4xl mx-auto">
                 Cari informasi yang Anda butuhkan di website Lab Kimia Dasar
               </p>
               
               {/* Search Input */}
-              <div className="relative max-w-2xl mx-auto">
+              <div className="relative max-w-3xl mx-auto">
                 <div className="relative">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
+                  <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 w-6 h-6 text-neutral-400" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Cari pengumuman, modul, atau informasi lainnya..."
-                    className="w-full pl-12 pr-4 py-4 text-lg border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full pl-16 pr-6 py-5 text-xl border border-neutral-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white shadow-sm"
                   />
                 </div>
               </div>
@@ -163,23 +171,23 @@ export default function SearchPage() {
         {/* Search Results */}
         <section className="section-padding bg-white">
           <div className="container-custom">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-5xl mx-auto">
               {/* Search Tabs */}
               {searchQuery && (
-                <div className="mb-8">
-                  <div className="flex space-x-1 bg-neutral-100 p-1 rounded-lg">
+                <div className="mb-12">
+                  <div className="inline-flex items-center bg-neutral-100 p-1 rounded-2xl">
                     {tabs.map((tab) => (
-                      <button
+                      <Button
                         key={tab.id}
+                        variant={activeTab === tab.id ? "primary" : "ghost"}
+                        size="sm"
                         onClick={() => setActiveTab(tab.id)}
-                        className={`flex-1 px-4 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
-                          activeTab === tab.id
-                            ? 'bg-white text-primary-600 shadow-sm'
-                            : 'text-neutral-600 hover:text-neutral-900'
+                        className={`rounded-xl ${
+                          activeTab === tab.id ? "shadow-md" : ""
                         }`}
                       >
                         {tab.label} ({tab.count})
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -189,87 +197,84 @@ export default function SearchPage() {
               {searchQuery ? (
                 <div>
                   {isLoading ? (
-                    <div className="text-center py-12">
-                      <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-                      <p className="mt-4 text-neutral-600">Mencari...</p>
+                    <div className="text-center py-16">
+                      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-3 border-primary-500"></div>
+                      <p className="mt-6 text-xl text-neutral-600">Mencari...</p>
                     </div>
                   ) : searchResults.length > 0 ? (
                     <div>
-                      <div className="mb-6">
-                        <p className="text-neutral-600">
+                      <div className="mb-8">
+                        <p className="text-lg text-neutral-600">
                           Ditemukan {searchResults.length} hasil untuk "{searchQuery}"
                         </p>
                       </div>
                       
-                      <div className="space-y-6">
+                      <div className="space-y-8">
                         {searchResults.map((result) => (
-                          <div
+                          <Card
                             key={result.id}
-                            className="card p-6 hover:shadow-lg transition-all duration-200"
+                            className="p-8 group cursor-pointer border-neutral-100 hover:shadow-xl transition-all duration-300"
                           >
-                            <div className="flex items-start space-x-4">
-                              <div className="flex-shrink-0">
+                            <div className="flex items-start space-x-6">
+                              <div className="w-12 h-12 bg-primary-100 rounded-2xl flex items-center justify-center flex-shrink-0">
                                 {getTypeIcon(result.type)}
                               </div>
                               
                               <div className="flex-1">
-                                <div className="flex items-center space-x-2 mb-2">
-                                  <span className="badge-primary text-xs">
+                                <div className="flex items-center space-x-4 mb-4">
+                                  <Badge variant="primary" className="text-sm">
                                     {getTypeLabel(result.type)}
-                                  </span>
+                                  </Badge>
                                   <div className="flex items-center text-sm text-neutral-500">
-                                    <Calendar className="w-4 h-4 mr-1" />
+                                    <Calendar className="w-4 h-4 mr-2" />
                                     {formatDate(result.date)}
                                   </div>
                                 </div>
                                 
-                                <h3 className="text-xl font-semibold text-neutral-900 mb-2 hover:text-primary-600 transition-colors duration-200">
-                                  <a href={result.url}>
+                                <h3 className="text-2xl font-semibold text-neutral-900 mb-4 hover:text-primary-600 transition-colors duration-300">
+                                  <a href={result.url} className="group">
                                     {result.title}
+                                    <span className="block text-sm text-primary-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                      Baca selengkapnya →
+                                    </span>
                                   </a>
                                 </h3>
                                 
-                                <p className="text-neutral-600 mb-4 leading-relaxed">
+                                <p className="text-neutral-600 mb-6 leading-relaxed text-lg">
                                   {result.excerpt}
                                 </p>
-                                
-                                <a
-                                  href={result.url}
-                                  className="text-primary-600 hover:text-primary-700 font-medium transition-colors duration-200"
-                                >
-                                  Baca selengkapnya →
-                                </a>
                               </div>
                             </div>
-                          </div>
+                          </Card>
                         ))}
                       </div>
                     </div>
                   ) : (
-                    <div className="text-center py-12">
-                      <Search className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
-                      <h3 className="text-xl font-semibold text-neutral-900 mb-2">
+                    <div className="text-center py-16">
+                      <div className="w-20 h-20 bg-neutral-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <Search className="w-10 h-10 text-neutral-400" />
+                      </div>
+                      <h3 className="text-2xl font-semibold text-neutral-900 mb-4">
                         Tidak ada hasil ditemukan
                       </h3>
-                      <p className="text-neutral-600 mb-6">
+                      <p className="text-lg text-neutral-600 mb-8 max-w-md mx-auto">
                         Coba gunakan kata kunci yang berbeda atau periksa ejaan
                       </p>
-                      <button
-                        onClick={() => setSearchQuery('')}
-                        className="btn-primary"
-                      >
+                      <Button onClick={() => setSearchQuery('')} className="shadow-lg hover:shadow-xl">
                         Hapus Pencarian
-                      </button>
+                      </Button>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="text-center py-12">
-                  <Search className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
-                  <h3 className="text-xl font-semibold text-neutral-900 mb-2">
+                <div className="text-center py-16">
+                  <div className="w-20 h-20 bg-primary-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <Search className="w-10 h-10 text-primary-600" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-neutral-900 mb-4">
                     Mulai Pencarian
                   </h3>
-                  <p className="text-neutral-600">
+                  <p className="text-lg text-neutral-600 max-w-md mx-auto">
                     Masukkan kata kunci untuk mencari informasi yang Anda butuhkan
                   </p>
                 </div>
@@ -278,7 +283,7 @@ export default function SearchPage() {
           </div>
         </section>
       </main>
-
+      
       <Footer />
     </div>
   )

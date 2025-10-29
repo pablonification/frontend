@@ -1,5 +1,7 @@
 import { Metadata } from 'next'
 import { ChevronDown, HelpCircle } from 'lucide-react'
+import Card from '../../components/ui/Card'
+import Button from '../../components/ui/Button'
 
 export const metadata: Metadata = {
   title: 'FAQ - Lab Kimia Dasar',
@@ -100,18 +102,23 @@ export default function FAQPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-white">
       
       <main>
         {/* Hero Section */}
-        <section className="hero-gradient section-padding">
-          <div className="container-custom">
-            <div className="text-center max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6">
+        <section className="hero-gradient relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent"></div>
+          <div className="container-custom section-padding relative">
+            <div className="text-center max-w-5xl mx-auto space-y-8">
+              <div className="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
+                <span className="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse"></span>
+                Bantuan & FAQ
+              </div>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-neutral-900 leading-tight tracking-tight">
                 FAQ
               </h1>
-              <p className="text-xl text-neutral-600 leading-relaxed">
-                Pertanyaan yang sering diajukan tentang praktikum kimia dasar, 
+              <p className="text-xl text-neutral-600 leading-relaxed max-w-4xl mx-auto">
+                Pertanyaan yang sering diajukan tentang praktikum kimia dasar,
                 jadwal, dan informasi lainnya.
               </p>
             </div>
@@ -121,35 +128,37 @@ export default function FAQPage() {
         {/* FAQ Content */}
         <section className="section-padding bg-white">
           <div className="container-custom">
-            <div className="max-w-4xl mx-auto">
-              <div className="space-y-12">
+            <div className="max-w-5xl mx-auto">
+              <div className="space-y-16">
                 {faqs.map((category, categoryIndex) => (
                   <div key={categoryIndex}>
-                    <h2 className="text-2xl font-bold text-neutral-900 mb-6 flex items-center">
-                      <HelpCircle className="w-6 h-6 mr-3 text-primary-600" />
+                    <h2 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-8 flex items-center">
+                      <div className="w-12 h-12 bg-primary-100 rounded-2xl flex items-center justify-center mr-4">
+                        <HelpCircle className="w-6 h-6 text-primary-600" />
+                      </div>
                       {category.category}
                     </h2>
                     
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                       {category.questions.map((faq, faqIndex) => (
-                        <div
+                        <Card
                           key={faqIndex}
-                          className="card p-6 hover:shadow-md transition-shadow duration-200"
+                          className="p-8 group cursor-pointer border-neutral-100 hover:shadow-lg transition-all duration-300"
                         >
                           <details className="group">
                             <summary className="flex items-center justify-between cursor-pointer list-none">
-                              <h3 className="text-lg font-semibold text-neutral-900 group-open:text-primary-600 transition-colors duration-200">
+                              <h3 className="text-xl font-semibold text-neutral-900 group-open:text-primary-600 transition-colors duration-300">
                                 {faq.question}
                               </h3>
-                              <ChevronDown className="w-5 h-5 text-neutral-500 group-open:rotate-180 transition-transform duration-200" />
+                              <ChevronDown className="w-6 h-6 text-neutral-500 group-open:rotate-180 transition-transform duration-300" />
                             </summary>
-                            <div className="mt-4 pt-4 border-t border-neutral-200">
-                              <p className="text-neutral-600 leading-relaxed">
+                            <div className="mt-6 pt-6 border-t border-neutral-200">
+                              <p className="text-neutral-600 leading-relaxed text-lg">
                                 {faq.answer}
                               </p>
                             </div>
                           </details>
-                        </div>
+                        </Card>
                       ))}
                     </div>
                   </div>
@@ -157,22 +166,24 @@ export default function FAQPage() {
               </div>
               
               {/* Contact CTA */}
-              <div className="mt-16 text-center">
-                <div className="card p-8 bg-primary-50">
-                  <h3 className="text-2xl font-bold text-neutral-900 mb-4">
+              <div className="mt-20 text-center">
+                <Card className="p-10 bg-gradient-to-br from-primary-50 to-primary-100 border-primary-200">
+                  <div className="w-16 h-16 bg-primary-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                    <HelpCircle className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-3xl font-bold text-neutral-900 mb-4">
                     Tidak Menemukan Jawaban?
                   </h3>
-                  <p className="text-neutral-600 mb-6">
-                    Jika Anda tidak menemukan jawaban yang Anda cari, 
+                  <p className="text-neutral-600 mb-8 leading-relaxed max-w-md mx-auto">
+                    Jika Anda tidak menemukan jawaban yang Anda cari,
                     silakan hubungi kami untuk mendapatkan bantuan.
                   </p>
-                  <a
-                    href="/kontak"
-                    className="btn-primary text-lg px-8 py-3"
-                  >
-                    Hubungi Kami
+                  <a href="/kontak">
+                    <Button size="lg" className="shadow-lg hover:shadow-xl">
+                      Hubungi Kami
+                    </Button>
                   </a>
-                </div>
+                </Card>
               </div>
             </div>
           </div>

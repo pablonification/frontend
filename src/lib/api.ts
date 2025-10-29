@@ -48,6 +48,16 @@ class ApiClient {
       return data
     } catch (error) {
       console.error('API request failed:', error)
+      
+      // Provide more specific error messages for common issues
+      if (error instanceof TypeError && error.message.includes('fetch failed')) {
+        throw new Error('Unable to connect to the backend server. Please check if the backend is running and accessible.')
+      }
+      
+      if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        throw new Error('Network error. Please check your internet connection.')
+      }
+      
       throw error
     }
   }

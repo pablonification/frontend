@@ -1,20 +1,13 @@
 import Link from "next/link";
 import { Beaker, FlaskConical, TestTube, ArrowRight } from "lucide-react";
 import React from "react";
+import Card from "../../components/ui/Card";
+import Button from "../../components/ui/Button";
+import { Metadata } from 'next'
 
-function Button({
-    children,
-    className = "",
-    variant,
-    size,
-    ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement> & { children?: React.ReactNode; className?: string; variant?: string; size?: string }) {
-    const base = "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium";
-    return (
-        <button {...props} className={`${base} ${className}`}>
-            {children}
-        </button>
-    );
+export const metadata: Metadata = {
+  title: 'Virtual Lab - Lab Kimia Dasar',
+  description: 'Simulasi Praktikum Interaktif - Lakukan eksperimen kimia secara virtual dengan visualisasi realistis.',
 }
 
 const practicums = [
@@ -116,72 +109,86 @@ const practicums = [
   }
 ];
 
-export default function PracticumCatalog() {
+export default function VirtualLabPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-16 px-6 shadow-xl">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-4 mb-4">
-            <Beaker className="w-16 h-16 animate-pulse" />
-            <div>
-              <h1 className="text-5xl font-bold mb-2">Virtual Lab Kimia</h1>
-              <p className="text-xl text-indigo-100">Simulasi Praktikum Interaktif</p>
+    <div className="min-h-screen bg-white">
+      
+      <main>
+        {/* Hero Section */}
+        <section className="hero-gradient relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-500/5 to-transparent"></div>
+          <div className="container-custom section-padding relative">
+            <div className="text-center max-w-5xl mx-auto space-y-8">
+              <div className="inline-flex items-center px-4 py-2 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
+                <span className="w-2 h-2 bg-primary-500 rounded-full mr-2 animate-pulse"></span>
+                Simulasi Praktikum Interaktif
+              </div>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-neutral-900 leading-tight tracking-tight">
+                Virtual Lab{' '}
+                <span className="gradient-text">Kimia</span>
+              </h1>
+              <p className="text-xl text-neutral-600 leading-relaxed max-w-4xl mx-auto text-balance">
+                Lakukan eksperimen kimia secara virtual dengan visualisasi realistis.
+                Aman, interaktif, dan menyenangkan!
+              </p>
             </div>
           </div>
-          <p className="text-lg text-indigo-100 max-w-2xl">
-            Lakukan eksperimen kimia secara virtual dengan visualisasi realistis. 
-            Aman, interaktif, dan menyenangkan! 🧪✨
-          </p>
-        </div>
-      </div>
+        </section>
 
-      {/* Practicum Cards */}
-      <div className="max-w-6xl mx-auto py-12 px-6">
-        <h2 className="text-3xl font-bold text-gray-800 mb-8">Pilih Praktikum</h2>
+        {/* Practicum Cards */}
+        <section className="section-padding bg-white">
+          <div className="container-custom">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">Pilih Praktikum</h2>
+              <p className="text-xl text-neutral-600 max-w-3xl mx-auto">
+                Pilih dari berbagai simulasi praktikum kimia yang tersedia
+              </p>
+            </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {practicums.map((practicum) => {
             const Icon = practicum.icon;
             return (
               <Link key={practicum.id} href={`/virtual-lab/${practicum.id}`} className="group">
-                <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden border border-gray-100">
+                <Card className="overflow-hidden border-neutral-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
                   {/* Card Header with Gradient */}
-                  <div className={`bg-gradient-to-r ${practicum.gradient} p-6 relative overflow-hidden`}>
+                  <div className={`bg-gradient-to-r ${practicum.gradient} p-8 relative overflow-hidden`}>
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
-                    <Icon className="w-12 h-12 text-white mb-3 relative z-10 group-hover:scale-110 transition-transform" />
-                    <h3 className="text-xl font-bold text-white relative z-10">{practicum.title}</h3>
+                    <Icon className="w-16 h-16 text-white mb-4 relative z-10 group-hover:scale-110 transition-transform" />
+                    <h3 className="text-2xl font-bold text-white relative z-10">{practicum.title}</h3>
                   </div>
 
                   {/* Card Body */}
-                  <div className="p-6">
-                    <p className="text-gray-600 mb-4 min-h-[48px]">{practicum.description}</p>
+                  <div className="p-8">
+                    <p className="text-neutral-600 mb-6 leading-relaxed min-h-[60px]">{practicum.description}</p>
                     
                     <div className="flex items-center justify-between">
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                        practicum.difficulty === "Easy" 
-                          ? "bg-green-100 text-green-700" 
+                      <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                        practicum.difficulty === "Easy"
+                          ? "bg-emerald-100 text-emerald-700"
                           : "bg-amber-100 text-amber-700"
                       }`}>
                         {practicum.difficulty}
                       </span>
 
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        className="group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors"
+                      <Button
+                        variant="secondary"
+                        size="md"
+                        className="group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors shadow-md hover:shadow-lg"
                       >
                         Mulai
-                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                       </Button>
                     </div>
                   </div>
-                </div>
+                </Card>
               </Link>
             );
-          })}
-        </div>
-      </div>
+            })}
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }
