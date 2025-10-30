@@ -102,7 +102,7 @@ export default function PengumumanPage() {
         </section>
 
         {/* Announcements List */}
-        <section className="section-padding bg-white">
+        <section className="section-padding bg-white" id="announcements">
           <div className="container-custom">
             <div className="max-w-5xl mx-auto">
               {loading && (
@@ -185,9 +185,9 @@ export default function PengumumanPage() {
                     )}
                     
                     <div className="flex items-center justify-between">
-                      <div className="text-sm text-neutral-500 font-medium">
+                      {/* <div className="text-sm text-neutral-500 font-medium">
                         ID: #{announcement.id.toString().padStart(3, '0')}
-                      </div>
+                      </div> */}
                     </div>
                   </Card>
                   ))}

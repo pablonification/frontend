@@ -123,21 +123,21 @@ export default function HomePage() {
       title: "Modul Praktikum",
       description: "Download modul praktikum terbaru",
       icon: BookOpen,
-      href: "/praktikum",
+      href: "/praktikum#modules",
       color: "bg-primary-500",
     },
     {
       title: "Jadwal Praktikum",
       description: "Lihat jadwal praktikum Anda",
       icon: Calendar,
-      href: "/praktikum",
+      href: "/praktikum#jadwal",
       color: "bg-emerald-500",
     },
     {
       title: "Pengumuman",
       description: "Informasi terbaru dari lab",
       icon: FileText,
-      href: "/pengumuman",
+      href: "/pengumuman#announcements",
       color: "bg-amber-500",
     },
   ];
@@ -426,7 +426,7 @@ export default function HomePage() {
                   </span>
                   <span className="text-sm text-neutral-500 flex items-center">
                     <Clock className="h-4 w-4 mr-2" />
-                    {new Date(announcement.publishedAt).toLocaleDateString(
+                    {new Date(announcement.published_at).toLocaleDateString(
                       "id-ID"
                     )}
                   </span>
