@@ -149,10 +149,6 @@ export default async function AnnouncementDetailPage({ params }: PageProps) {
                       {formatRelativeTime(announcement.publishedAt)}
                     </div>
                   </div>
-                  
-                  <div className="text-sm text-neutral-500">
-                    ID: #{announcement.id.toString().padStart(3, '0')}
-                  </div>
                 </div>
                 
                 <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-6">

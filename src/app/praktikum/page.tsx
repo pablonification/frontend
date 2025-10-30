@@ -1,6 +1,6 @@
 'use client'
 
-import { BookOpen, Calendar, Users, Download, FileText, AlertCircle } from 'lucide-react'
+import { BookOpen, Calendar, Users, Download, AlertCircle, FileTextIcon } from 'lucide-react'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
@@ -209,7 +209,7 @@ export default function PraktikumPage() {
 
             {!loading && !error && modules.length === 0 && (
               <div className="text-center py-20">
-                <FileText className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
+                <FileTextIcon className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
                 <p className="text-xl text-neutral-600 mb-2">Belum ada modul tersedia</p>
                 <p className="text-neutral-500">Modul praktikum akan muncul di sini setelah dipublikasikan.</p>
               </div>
@@ -222,7 +222,7 @@ export default function PraktikumPage() {
                   <div className="flex items-start justify-between mb-6">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center">
-                        <FileText className="w-5 h-5 text-primary-600" />
+                        <FileTextIcon className="w-5 h-5 text-primary-600" />
                       </div>
                       <span className="text-sm text-neutral-500 font-medium">{formatFileSize(module.file_size)}</span>
                     </div>
