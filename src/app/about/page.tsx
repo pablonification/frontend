@@ -138,15 +138,15 @@ export default function AboutPage() {
                   {[
                     {
                       name: "Meja kerja praktikum yang ergonomis",
-                      image: "/images/facilities/workbench.png"
+                      image: "/images/facilities/workbench.jpg"
                     },
                     {
                       name: "Peralatan laboratorium modern",
-                      image: "/images/facilities/equipment.png"
+                      image: "/images/facilities/equipment.svg"
                     },
                     {
                       name: "Tempat laboratorium yang memadai",
-                      image: "/images/facilities/ventilation.png"
+                      image: "/images/facilities/ventilation.svg"
                     }
                   ].map((facility, index) => (
                     <div

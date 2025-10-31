@@ -30,6 +30,8 @@ const nextConfig = {
     // Disable optimization temporarily to ensure images load on Vercel
     // Can be re-enabled once images are confirmed working
     unoptimized: true,
+    // Add domain configuration for static images
+    domains: [],
   }
 }
 
