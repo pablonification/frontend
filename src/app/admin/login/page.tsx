@@ -6,7 +6,7 @@ import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
 import Button from '../../../components/ui/Button'
 import Card from '../../../components/ui/Card'
 import { useApp } from '../../../contexts/AppContext'
-import { api, endpoints, LoginResponse } from '../../../lib/api'
+import { api, endpoints, LoginResponse, API_BASE_URL } from '../../../lib/api'
 
 export default function AdminLogin() {
   const router = useRouter()
@@ -85,24 +85,37 @@ export default function AdminLogin() {
         }
       } catch (apiError: any) {
         console.error('API login error:', apiError)
+        console.error('Error message:', apiError.message)
         
-        // Check if it's a network error (backend not running)
+        // Check if it's a CORS error
+        if (apiError.message && apiError.message.includes('CORS')) {
+          setError(`CORS Error: Backend di ${API_BASE_URL} tidak mengizinkan request dari origin ini. Pastikan backend dikonfigurasi untuk mengizinkan CORS dari frontend Anda.`)
+          return
+        }
+        
+        // Check if it's a network error (backend not running or CORS issue)
         if (apiError.message && (
           apiError.message.includes('Unable to connect') || 
           apiError.message.includes('Network error') ||
           apiError.message.includes('Failed to fetch')
         )) {
-          // Backend tidak tersedia, gunakan mock auth sebagai fallback
-          console.warn('Backend tidak tersedia, menggunakan mock auth')
+          // This could be a CORS issue or backend not running
+          console.warn('Backend tidak dapat diakses')
           
-          if (formData.email === 'admin@labkimia.ac.id' && formData.password === 'admin123') {
-            // JANGAN gunakan mock token jika backend tersedia
-            // User harus menggunakan backend yang sebenarnya
-            setError('Backend server tidak tersedia. Pastikan backend berjalan di http://localhost:5001')
-            return
-          } else {
-            setError('Email atau password salah')
-          }
+          // Check browser console for CORS errors
+          const errorMsg = `Tidak dapat terhubung ke backend di ${API_BASE_URL}. 
+          
+Kemungkinan penyebab:
+1. CORS Error - Backend tidak mengizinkan request dari origin frontend
+2. Backend tidak berjalan atau tidak dapat diakses
+
+Solusi:
+- Buka Developer Tools (F12) > Console untuk melihat error detail
+- Pastikan backend dikonfigurasi untuk mengizinkan CORS dari origin frontend Anda
+- Cek apakah backend berjalan di ${API_BASE_URL}`
+          
+          setError(errorMsg)
+          return
         } else {
           // API error lainnya (invalid credentials, dll)
           setError(apiError.message || 'Email atau password salah')
