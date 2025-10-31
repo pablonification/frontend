@@ -89,7 +89,13 @@ export default function AdminLogin() {
         
         // Check if it's a CORS error
         if (apiError.message && apiError.message.includes('CORS')) {
-          setError(`CORS Error: Backend di ${API_BASE_URL} tidak mengizinkan request dari origin ini. Pastikan backend dikonfigurasi untuk mengizinkan CORS dari frontend Anda.`)
+          const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'unknown'
+          setError(`CORS Error: Backend di ${API_BASE_URL} tidak mengizinkan request dari origin: ${currentOrigin}
+
+Backend saat ini hanya mengizinkan: https://labkidasitb.vercel.app
+Origin Anda saat ini: ${currentOrigin}
+
+Solusi: Tambahkan "${currentOrigin}" ke daftar allowed origins di backend CORS configuration.`)
           return
         }
         

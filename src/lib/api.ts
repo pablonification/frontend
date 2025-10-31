@@ -1,4 +1,24 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://128.199.70.237'
+// Use proxy in production (when on HTTPS) to avoid mixed content issues
+// In production, we'll proxy through Next.js API routes at /api/proxy/...
+// In development, use direct backend URL
+const getApiBaseUrl = () => {
+  // Check if we should use proxy (HTTPS frontend + HTTP backend)
+  if (typeof window !== 'undefined') {
+    const isHttps = window.location.protocol === 'https:'
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'http://128.199.70.237'
+    const backendIsHttp = backendUrl.startsWith('http://')
+    
+    // If frontend is HTTPS and backend is HTTP, use proxy to avoid mixed content
+    if (isHttps && backendIsHttp) {
+      return '/api/proxy' // Use Next.js API proxy
+    }
+  }
+  
+  // Development or explicit env var (direct connection)
+  return process.env.NEXT_PUBLIC_API_URL || 'http://128.199.70.237'
+}
+
+export const API_BASE_URL = getApiBaseUrl()
 
 interface ApiResponse<T> {
   data: T
@@ -127,8 +147,16 @@ class ApiClient {
       
       if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
         // This is often a CORS error when accessing cross-origin resources
-        if (error.message.includes('CORS') || !error.message.includes('Network')) {
-          throw new Error(`CORS error: The backend at ${url} is not allowing requests from this origin. Please configure CORS on the backend to allow requests from ${typeof window !== 'undefined' ? window.location.origin : 'your frontend origin'}.`)
+        const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'unknown'
+        const isLikelyCors = error.message.includes('Failed to fetch') || error.message.includes('network')
+        
+        if (isLikelyCors) {
+          throw new Error(`CORS error: The backend at ${url} is not allowing requests from origin: ${currentOrigin}. 
+          
+Backend currently allows: https://labkidasitb.vercel.app
+Your current origin: ${currentOrigin}
+
+Please add "${currentOrigin}" to the backend CORS allowed origins list.`)
         }
         throw new Error('Network error. Please check your internet connection.')
       }
