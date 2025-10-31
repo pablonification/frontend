@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001'
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://128.199.70.237'
 
 interface ApiResponse<T> {
   data: T
@@ -108,6 +108,12 @@ class ApiClient {
       return data
     } catch (error: any) {
       console.error('API request failed:', error)
+      console.error('Request URL was:', url)
+      console.error('Error details:', {
+        message: error.message,
+        name: error.name,
+        stack: error.stack
+      })
       
       // If it's already an Error with isAuthError, rethrow it
       if (error.isAuthError) {
@@ -116,10 +122,14 @@ class ApiClient {
       
       // Provide more specific error messages for common issues
       if (error instanceof TypeError && error.message.includes('fetch failed')) {
-        throw new Error('Unable to connect to the backend server. Please check if the backend is running and accessible.')
+        throw new Error(`Unable to connect to the backend server at ${url}. This might be a CORS issue. Please check if the backend is running and allows requests from this origin.`)
       }
       
       if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+        // This is often a CORS error when accessing cross-origin resources
+        if (error.message.includes('CORS') || !error.message.includes('Network')) {
+          throw new Error(`CORS error: The backend at ${url} is not allowing requests from this origin. Please configure CORS on the backend to allow requests from ${typeof window !== 'undefined' ? window.location.origin : 'your frontend origin'}.`)
+        }
         throw new Error('Network error. Please check your internet connection.')
       }
       
