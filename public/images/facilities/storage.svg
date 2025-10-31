@@ -1,0 +1,17 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="200" fill="#f0f9ff"/>
+  <rect x="30" y="40" width="140" height="140" fill="#64748b" rx="5"/>
+  <rect x="40" y="50" width="120" height="30" fill="#94a3b8" rx="3"/>
+  <rect x="40" y="90" width="120" height="30" fill="#94a3b8" rx="3"/>
+  <rect x="40" y="130" width="120" height="30" fill="#94a3b8" rx="3"/>
+  <rect x="50" y="60" width="30" height="10" fill="#3b82f6" rx="2"/>
+  <rect x="90" y="60" width="30" height="10" fill="#3b82f6" rx="2"/>
+  <rect x="130" y="60" width="20" height="10" fill="#ef4444" rx="2"/>
+  <rect x="50" y="100" width="30" height="10" fill="#3b82f6" rx="2"/>
+  <rect x="90" y="100" width="30" height="10" fill="#3b82f6" rx="2"/>
+  <rect x="130" y="100" width="20" height="10" fill="#ef4444" rx="2"/>
+  <rect x="50" y="140" width="30" height="10" fill="#3b82f6" rx="2"/>
+  <rect x="90" y="140" width="30" height="10" fill="#3b82f6" rx="2"/>
+  <rect x="130" y="140" width="20" height="10" fill="#ef4444" rx="2"/>
+  <text x="100" y="25" text-anchor="middle" fill="#1e293b" font-family="Arial" font-size="14" font-weight="bold">Storage</text>
+</svg>
