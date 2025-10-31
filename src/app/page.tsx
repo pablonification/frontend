@@ -244,10 +244,12 @@ export default function HomePage() {
             {/* Left Image with enhanced styling */}
             <div className="relative aspect-[4/5] bg-gradient-to-br from-teal-100 to-cyan-100 rounded-3xl overflow-hidden shadow-2xl md:transform md:-rotate-3 md:hover:rotate-0 transition-all duration-500 hover:shadow-3xl group">
               <div className="absolute inset-0 bg-gradient-to-t from-teal-900/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <img
-                src={'/pajang-1.jpg'}
+              <Image
+                src="/pajang-1.jpg"
                 alt="Praktikum 1"
-                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                fill
+                className="object-cover transform group-hover:scale-105 transition-transform duration-500"
+                sizes="(max-width: 768px) 100vw, 33vw"
               />
               <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-teal-900/80 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                 <p className="text-white font-medium">Eksperimen Kimia Dasar</p>
@@ -281,10 +283,12 @@ export default function HomePage() {
                         pointerEvents: isActive ? 'auto' : 'none'
                       }}
                     >
-                      <img
+                      <Image
                         src={imageSrc}
                         alt={slider.title || 'Praktikum featured'}
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                        fill
+                        className="object-cover transform group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, 33vw"
                       />
                     </div>
                   );
@@ -323,10 +327,12 @@ export default function HomePage() {
             {/* Right Image with enhanced styling */}
             <div className="relative aspect-[4/5] bg-gradient-to-br from-cyan-100 to-teal-200 rounded-3xl overflow-hidden shadow-2xl md:transform md:rotate-3 md:hover:rotate-0 transition-all duration-500 hover:shadow-3xl group">
               <div className="absolute inset-0 bg-gradient-to-t from-cyan-900/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <img
-                src={'/pajang-2.png'}
+              <Image
+                src="/pajang-2.png"
                 alt="Praktikum 3"
-                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                fill
+                className="object-cover transform group-hover:scale-105 transition-transform duration-500"
+                sizes="(max-width: 768px) 100vw, 33vw"
               />
               <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-cyan-900/80 to-transparent translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                 <p className="text-white font-medium">Laboratorium Modern</p>
