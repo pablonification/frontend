@@ -32,7 +32,11 @@ const nextConfig = {
     unoptimized: true,
     // Add domain configuration for static images
     domains: [],
-  }
+  },
+  // Ensure static files are properly handled
+  trailingSlash: false,
+  // Add proper asset prefix if needed
+  assetPrefix: process.env.NODE_ENV === 'production' ? '' : '',
 }
 
 module.exports = nextConfig
