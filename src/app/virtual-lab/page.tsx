@@ -151,8 +151,8 @@ export default function VirtualLabPage() {
             return (
               <Link key={practicum.id} href={`/virtual-lab/${practicum.id}`} className="group">
                 <Card className="overflow-hidden border-neutral-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-                  {/* Card Header with Gradient */}
-                  <div className={`bg-gradient-to-r ${practicum.gradient} p-8 relative overflow-hidden`}>
+                  {/* Card Header - unified teal color (was gradient per practicum) */}
+                  <div className={`bg-teal-600 p-8 relative overflow-hidden`}>
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
                     <Icon className="w-16 h-16 text-white mb-4 relative z-10 group-hover:scale-110 transition-transform" />
                     <h3 className="text-2xl font-bold text-white relative z-10">{practicum.title}</h3>

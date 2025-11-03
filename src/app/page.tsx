@@ -121,24 +121,31 @@ export default function HomePage() {
   const quickAccessItems = [
     {
       title: "Modul Praktikum",
-      description: "Download modul praktikum terbaru",
+      description: "Unduh panduan lengkap, pastikan Anda siap di laboratorium.",
       icon: BookOpen,
       href: "/praktikum#modules",
-      color: "bg-primary-500",
+      color: "bg-teal-600", // Warna dasar hijau tosca
     },
     {
       title: "Jadwal Praktikum",
-      description: "Lihat jadwal praktikum Anda",
+      description: "Cek sesi dan ruangan Anda secara *real-time*.",
       icon: Calendar,
       href: "/praktikum#jadwal",
-      color: "bg-emerald-500",
+      color: "bg-teal-600", // Hijau terang
     },
     {
       title: "Pengumuman",
-      description: "Informasi terbaru dari lab",
+      description: "Informasi terkini, jangan sampai terlewat!",
       icon: FileText,
       href: "/pengumuman#announcements",
-      color: "bg-amber-500",
+      color: "bg-teal-600", // Biru cyan
+    },
+    {
+      title: "Virtual Lab",
+      description: "Simulasi interaktif untuk pemahaman konsep.",
+      icon: Play,
+      href: "/virtual-lab",
+      color: "bg-teal-600", // Ungu sebagai aksen
     },
   ];
 
@@ -466,40 +473,59 @@ export default function HomePage() {
         </div>
       </section>
 
-            {/* Quick Access Section */}
+            {/* QUICK ACCESS SECTION - REVISED */}
             <section className="section-padding bg-white">
         <div className="container-custom">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
-              Akses Cepat
+              Fitur Website Laboratorium
             </h2>
             <p className="text-xl text-neutral-600 max-w-5xl mx-auto">
-              Semua yang Anda butuhkan untuk praktikum kimia dasar tersedia dalam satu
-              platform yang terintegrasi
+              Dapatkan semua panduan, jadwal, dan simulasi yang Anda perlukan untuk praktikum kimia dasar
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* We now have 4 items: Modul, Jadwal, Pengumuman, Virtual Lab */}
             {quickAccessItems.map((item, index) => (
               <Link key={index} href={item.href}>
-                <Card className="p-8 text-center group cursor-pointer border-neutral-100 h-full flex flex-col">
-                  <div
-                    className={`w-20 h-20 ${item.color} rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-all duration-300 group-hover:shadow-lg`}
-                  >
-                    <item.icon className="h-10 w-10 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-neutral-900 mb-3">
-                    {item.title}
-                  </h3>
-                  <p className="text-neutral-600 leading-relaxed flex-grow">
-                    {item.description}
-                  </p>
-                </Card>
+                <div className={`
+                                    p-8 group cursor-pointer h-full flex flex-col items-center justify-center text-center
+                                    rounded-3xl shadow-xl border border-gray-100 transition-all duration-500
+                                    hover:shadow-2xl hover:scale-[1.03] hover:border-transparent
+                                    hover:bg-gradient-to-br from-teal-50 to-cyan-50
+                                `}>
+                                    {/* Icon Container with Gradient and Hover Effect */}
+                                    <div
+                                        className={`
+                                            w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-500
+                                            ${item.color} shadow-lg
+                                            group-hover:ring-4 group-hover:ring-opacity-50 group-hover:ring-cyan-300
+                                            group-hover:scale-105
+                                        `}
+                                    >
+                                        <item.icon className="h-10 w-10 text-white" />
+                                    </div>
+                                    
+                                    {/* Title and Description */}
+                                    <h3 className="text-xl font-extrabold text-neutral-900 mb-3 group-hover:text-teal-700 transition-colors">
+                                        {item.title}
+                                    </h3>
+                                    <p className="text-neutral-600 leading-relaxed flex-grow text-sm">
+                                        {item.description}
+                                    </p>
+
+                                    {/* Call to Action Button/Indicator */}
+                                    <div className="mt-4 text-teal-600 font-semibold flex items-center group-hover:translate-x-1 transition-transform duration-300">
+                                        Akses Sekarang <ChevronRight className="ml-1 h-5 w-5" />
+                                    </div>
+                                </div>
               </Link>
             ))}
           </div>
         </div>
       </section>
+            {/* End Quick Access Section */}
 
       {/* CTA Section */}
       {/* <section className="section-padding bg-gradient-to-r from-primary-500 to-primary-600 relative overflow-hidden">

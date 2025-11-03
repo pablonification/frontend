@@ -19,6 +19,32 @@ const formatFileSize = (bytes?: number): string => {
   return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i]
 }
 
+// Small CountUp component for simple number animations
+function CountUp({ end, duration = 700 }: { end: number; duration?: number }) {
+  const [value, setValue] = useState(0)
+
+  useEffect(() => {
+    let rafId: number | null = null
+    const start = performance.now()
+    const tick = (now: number) => {
+      const elapsed = now - start
+      const progress = Math.min(elapsed / duration, 1)
+      setValue(Math.floor(progress * end))
+      if (progress < 1) {
+        rafId = requestAnimationFrame(tick)
+      } else {
+        setValue(end)
+      }
+    }
+    rafId = requestAnimationFrame(tick)
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId)
+    }
+  }, [end, duration])
+
+  return <span>{value}</span>
+}
+
 export default function PraktikumPage() {
   const { addNotification } = useApp()
   const [modules, setModules] = useState<Module[]>([])
@@ -116,14 +142,18 @@ export default function PraktikumPage() {
   }
 
   const schedule = [
-    { day: 'Senin', time: '08:00 - 10:00', class: 'A1', room: 'Lab 1' },
-    { day: 'Senin', time: '10:00 - 12:00', class: 'A2', room: 'Lab 1' },
-    { day: 'Selasa', time: '08:00 - 10:00', class: 'B1', room: 'Lab 2' },
-    { day: 'Selasa', time: '10:00 - 12:00', class: 'B2', room: 'Lab 2' },
-    { day: 'Rabu', time: '08:00 - 10:00', class: 'C1', room: 'Lab 1' },
-    { day: 'Rabu', time: '10:00 - 12:00', class: 'C2', room: 'Lab 1' },
-    { day: 'Kamis', time: '08:00 - 10:00', class: 'D1', room: 'Lab 2' },
-    { day: 'Kamis', time: '10:00 - 12:00', class: 'D2', room: 'Lab 2' }
+    { day: 'Senin', time: '08:00 - 10:00', class: 'K01, K02, K03', faculty: 'STEI-K', room: 'Gedung labtek 1A Kampus ITB Jatinangor, Lantai 1' },
+    { day: 'Senin', time: '10:00 - 12:00', class: 'K01, K02', faculty: 'FTMD', room: 'Gedung labtek 1A Kampus ITB Jatinangor, Lantai 2' },
+    { day: 'Selasa', time: '08:00 - 10:00', class: 'K01, K02, K03', faculty: 'FTI', room: 'Gedung labtek 1A Kampus ITB Jatinangor, Lantai 1' },
+    { day: 'Selasa', time: '10:00 - 12:00', class: 'K01, K02, K03', faculty: 'SAPPPK', room: 'Gedung labtek 1A Kampus ITB Jatinangor, Lantai 2' },
+    { day: 'Rabu', time: '08:00 - 10:00', class: 'K01, K02', faculty: 'SITH-R', room: 'Gedung labtek 1A Kampus ITB Jatinangor, Lantai 1' },
+    { day: 'Rabu', time: '10:00 - 12:00', class: 'K01, K02, K03, K04', faculty: 'SITH-S', room: 'Gedung labtek 1A Kampus ITB Jatinangor, Lantai 2' },
+    { day: 'Rabu', time: '13:00 - 15:00', class: 'K01, K02, K03', faculty: 'FTTM', room: 'Gedung labtek 1A Kampus ITB Jatinangor, Lantai 2' },
+    { day: 'Rabu', time: '13:00 - 15:00', class: 'K01, K02, K03', faculty: 'SF', room: 'Gedung labtek 1A Kampus ITB Jatinangor, Lantai 1' },
+    { day: 'Kamis', time: '08:00 - 10:00', class: 'K01, K02', faculty: 'FITB', room: 'Gedung labtek 1A Kampus ITB Jatinangor, Lantai 2' },
+    { day: 'Kamis', time: '10:00 - 12:00', class: 'K01, K02, K03', faculty: 'SF', room: 'Gedung labtek 1A Kampus ITB Jatinangor, Lantai 1' },
+    { day: 'Kamis', time: '13:00 - 15:00', class: 'K01, K02, K03', faculty: 'FITB C', room: 'Gedung labtek 1A Kampus ITB Jatinangor, Lantai 2' },
+    { day: 'Jumat', time: '08:00 - 10:00', class: 'K01, K02, K03', faculty: 'FTMD', room: 'Gedung labtek 1A Kampus ITB Jatinangor, Lantai 1' }
   ]
 
   return (
@@ -150,31 +180,33 @@ export default function PraktikumPage() {
           </div>
         </section>
 
-        {/* Quick Stats */}
+        {/* Quick Stats - updated to use Card styling for visual consistency */}
         <section className="section-padding bg-white">
           <div className="container-custom">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-              <div className="text-center">
-                <div className="bg-primary-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <BookOpen className="w-10 h-10 text-primary-600" />
+                <Card className="p-8 text-center h-full flex flex-col items-center justify-center group hover:scale-105 transition-transform duration-300 hover:shadow-2xl">
+                  <div className="bg-teal-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 transform transition-all duration-500 group-hover:scale-110 group-hover:ring-4 group-hover:ring-teal-300">
+                    <BookOpen className="w-10 h-10 text-white" />
+                  </div>
+                  <h3 className="text-3xl font-bold text-neutral-900 mb-2"><CountUp end={5} /> <span className="text-base font-medium text-neutral-600">Modul</span></h3>
+                  <p className="text-neutral-600 font-medium">Praktikum tersedia</p>
+                </Card>
+
+              <Card className="p-8 text-center h-full flex flex-col items-center justify-center group hover:scale-105 transition-transform duration-300 hover:shadow-2xl">
+                <div className="bg-teal-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 transform transition-all duration-500 group-hover:scale-110 group-hover:ring-4 group-hover:ring-emerald-300">
+                  <Calendar className="w-10 h-10 text-white" />
                 </div>
-                <h3 className="text-3xl font-bold text-neutral-900 mb-2">5 Modul</h3>
-                <p className="text-neutral-600 font-medium">Praktikum tersedia</p>
-              </div>
-              <div className="text-center">
-                <div className="bg-emerald-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Calendar className="w-10 h-10 text-emerald-600" />
-                </div>
-                <h3 className="text-3xl font-bold text-neutral-900 mb-2">8 Sesi</h3>
+                <h3 className="text-3xl font-bold text-neutral-900 mb-2"><CountUp end={8} /> <span className="text-base font-medium text-neutral-600">Sesi</span></h3>
                 <p className="text-neutral-600 font-medium">Per minggu</p>
-              </div>
-              <div className="text-center">
-                <div className="bg-amber-100 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Users className="w-10 h-10 text-amber-600" />
+              </Card>
+
+              <Card className="p-8 text-center h-full flex flex-col items-center justify-center group hover:scale-105 transition-transform duration-300 hover:shadow-2xl">
+                <div className="bg-teal-600 w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6 transform transition-all duration-500 group-hover:scale-110 group-hover:ring-4 group-hover:ring-cyan-300">
+                  <Users className="w-10 h-10 text-white" />
                 </div>
-                <h3 className="text-3xl font-bold text-neutral-900 mb-2">16 Kelompok</h3>
+                <h3 className="text-3xl font-bold text-neutral-900 mb-2"><CountUp end={16} /> <span className="text-base font-medium text-neutral-600">Kelompok</span></h3>
                 <p className="text-neutral-600 font-medium">Mahasiswa aktif</p>
-              </div>
+              </Card>
             </div>
           </div>
         </section>
@@ -277,6 +309,9 @@ export default function PraktikumPage() {
                       Kelas
                     </th>
                     <th className="border border-neutral-200 px-6 py-4 text-left font-semibold text-neutral-900">
+                      Fakultas
+                    </th>
+                    <th className="border border-neutral-200 px-6 py-4 text-left font-semibold text-neutral-900">
                       Ruang
                     </th>
                   </tr>
@@ -294,8 +329,12 @@ export default function PraktikumPage() {
                         {item.class}
                       </td>
                       <td className="border border-neutral-200 px-6 py-4 text-neutral-700">
+                        {item.faculty}
+                      </td>
+                      <td className="border border-neutral-200 px-6 py-4 text-neutral-700">
                         {item.room}
                       </td>
+                      
                     </tr>
                   ))}
                 </tbody>
