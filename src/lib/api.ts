@@ -403,7 +403,10 @@ Please add "${currentOrigin}" to the backend CORS allowed origins list.`)
     
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        url.searchParams.append(key, value)
+        if (value === undefined || value === null) return
+        const stringValue = typeof value === 'string' ? value : String(value)
+        if (stringValue === '') return
+        url.searchParams.append(key, stringValue)
       })
     }
 
