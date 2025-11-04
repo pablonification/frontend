@@ -14,7 +14,8 @@ import {
   Menu,
   X,
   Home,
-  Users
+  Users,
+  Inbox
 } from 'lucide-react'
 import Button from '../ui/Button'
 import { api, endpoints } from '../../lib/api'
@@ -86,6 +87,11 @@ export default function AdminSidebar() {
       name: 'Nilai',
       href: '/admin/nilai',
       icon: Award
+    },
+    {
+      name: 'Pesan',
+      href: '/admin/messages',
+      icon: Inbox
     }
   ]
 
