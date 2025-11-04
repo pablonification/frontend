@@ -399,7 +399,15 @@ Please add "${currentOrigin}" to the backend CORS allowed origins list.`)
 
   // GET request with query parameters
   async getWithQuery<T>(endpoint: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
-    const url = new URL(`${this.baseURL}${endpoint}`)
+    // Ensure absolute URL even if baseURL is relative (e.g., '/api/proxy')
+    const raw = `${this.baseURL}${endpoint}`
+    let url: URL
+    if (typeof window !== 'undefined') {
+      url = new URL(raw, window.location.origin)
+    } else {
+      // Fallback base for server-side; will not be used in client navigation
+      url = new URL(raw, process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost')
+    }
     
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
