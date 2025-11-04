@@ -2,14 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
   FileText,
-  Image,
   BookOpen,
-  Award,
-  Settings,
   LogOut,
   Menu,
   X,
@@ -17,8 +15,6 @@ import {
   Users,
   Inbox
 } from 'lucide-react'
-import Button from '../ui/Button'
-import { api, endpoints } from '../../lib/api'
 import { useApp } from '../../contexts/AppContext'
 
 export default function AdminSidebar() {
@@ -34,9 +30,6 @@ export default function AdminSidebar() {
 
   const handleLogout = async () => {
     try {
-      // For demo purposes, skip API call and just clear local storage
-      
-      // Clear authentication token
       localStorage.removeItem('auth_token')
       localStorage.removeItem('user_data')
       
@@ -69,11 +62,6 @@ export default function AdminSidebar() {
       icon: FileText
     },
     {
-      name: 'File',
-      href: '/admin/files',
-      icon: FileText
-    },
-    {
       name: 'Modul',
       href: '/admin/modules',
       icon: BookOpen
@@ -82,11 +70,6 @@ export default function AdminSidebar() {
       name: 'Kelompok',
       href: '/admin/groups',
       icon: Users
-    },
-    {
-      name: 'Nilai',
-      href: '/admin/nilai',
-      icon: Award
     },
     {
       name: 'Pesan',
@@ -111,11 +94,9 @@ export default function AdminSidebar() {
         <div className="flex items-center justify-between">
           {mounted && !isCollapsed && (
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center shadow-sm">
-                <span className="text-white font-bold text-lg">A</span>
-              </div>
+              <Image src="/logo_itb2.png" alt="Lab Kimia Dasar" width={55} height={55} />
               <span className="text-lg font-bold text-neutral-900">
-                Admin Panel
+                Admin Dashboard
               </span>
             </div>
           )}
