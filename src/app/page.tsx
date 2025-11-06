@@ -34,10 +34,10 @@ export default function HomePage() {
   
   // Fallback slider data in case API fails
   const fallbackSliders = [
-    { id: 1, image_path: '/slideshow-1.jpeg', title: 'Laboratorium Kimia Dasar' },
-    { id: 2, image_path: '/slideshow-2.jpg', title: 'Praktikum Kimia' },
-    { id: 3, image_path: '/slideshow-3.jpg', title: 'Eksperimen Kimia' },
-    { id: 4, image_path: '/slideshow-4.jpg', title: 'Lab Modern' }
+    { id: 1, image_path: '/tolongdong-1.jpg', title: 'Laboratorium Kimia Dasar' },
+    { id: 2, image_path: '/tolongdong-2.jpg', title: 'Praktikum Kimia' },
+    { id: 3, image_path: '/tolongdong-3.jpg', title: 'Eksperimen Kimia' },
+    { id: 4, image_path: '/tolongdong-4.jpg', title: 'Lab Modern' }
   ];
   
   useEffect(() => {
@@ -253,7 +253,7 @@ export default function HomePage() {
               <div className="absolute inset-0 bg-gradient-to-t from-teal-900/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20"></div>
               <div className="relative w-full h-full">
                 <Image
-                  src="/pajang-1.jpg"
+                  src="/tolong.jpg"
                   alt="Praktikum 1"
                   fill
                   priority
