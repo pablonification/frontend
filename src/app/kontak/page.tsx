@@ -1,23 +1,24 @@
-import { Metadata } from 'next'
+"use client"
+
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react'
+import { useState } from 'react'
+import { useApp } from '../../contexts/AppContext'
+import { api, endpoints } from '../../lib/api'
 import Card from '../../components/ui/Card'
 import Button from '../../components/ui/Button'
 
-export const metadata: Metadata = {
-  title: 'Kontak - Lab Kimia Dasar',
-  description: 'Hubungi Laboratorium Kimia Dasar untuk informasi lebih lanjut tentang praktikum, jadwal, dan layanan lainnya.',
-}
-
 export default function KontakPage() {
+  const { addNotification } = useApp()
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' })
+  const [submitting, setSubmitting] = useState(false)
   const contactInfo = [
     {
       icon: MapPin,
       title: 'Alamat',
       details: [
-        'Gedung Sains, Lantai 2',
-        'Universitas Example',
-        'Jl. Contoh No. 123',
-        'Jakarta 12345'
+        'Laboratorium Kimia Dasar',
+        'ITB Jatinangor',
+        'Jatinangor 45363'
       ]
     },
     {
@@ -32,8 +33,8 @@ export default function KontakPage() {
       icon: Mail,
       title: 'Email',
       details: [
-        'labkimia@university.ac.id',
-        'koordinator@university.ac.id'
+        'labkidas@itb.ac.id',
+        'koordinator@itb.ac.id'
       ]
     },
     {
@@ -108,7 +109,31 @@ export default function KontakPage() {
                 <h2 className="text-4xl font-bold text-neutral-900 mb-8">
                   Kirim Pesan
                 </h2>
-                <form className="space-y-8">
+                <form
+                  className="space-y-8"
+                  onSubmit={async (e) => {
+                    e.preventDefault()
+                    if (submitting) return
+                    setSubmitting(true)
+                    try {
+                      await api.post(endpoints.contact.create, form)
+                      setForm({ name: '', email: '', subject: '', message: '' })
+                      addNotification({
+                        type: 'success',
+                        title: 'Pesan terkirim',
+                        message: 'Pesan Anda telah disimpan. Admin akan menindaklanjuti dari dashboard.'
+                      })
+                    } catch (err: any) {
+                      addNotification({
+                        type: 'error',
+                        title: 'Gagal mengirim pesan',
+                        message: err?.message || 'Silakan coba lagi nanti.'
+                      })
+                    } finally {
+                      setSubmitting(false)
+                    }
+                  }}
+                >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
                       <label htmlFor="name" className="label">
@@ -119,6 +144,8 @@ export default function KontakPage() {
                         id="name"
                         name="name"
                         className="input"
+                        value={form.name}
+                        onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                         placeholder="Masukkan nama lengkap"
                         required
                       />
@@ -132,6 +159,8 @@ export default function KontakPage() {
                         id="email"
                         name="email"
                         className="input"
+                        value={form.email}
+                        onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                         placeholder="nama@email.com"
                         required
                       />
@@ -147,6 +176,8 @@ export default function KontakPage() {
                       id="subject"
                       name="subject"
                       className="input"
+                      value={form.subject}
+                      onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))}
                       placeholder="Subjek pesan"
                       required
                     />
@@ -161,14 +192,16 @@ export default function KontakPage() {
                       name="message"
                       rows={6}
                       className="textarea"
+                      value={form.message}
+                      onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
                       placeholder="Tuliskan pesan Anda di sini..."
                       required
                     />
                   </div>
                   
-                  <Button type="submit" className="w-full shadow-lg hover:shadow-xl">
+                  <Button type="submit" disabled={submitting} className="w-full shadow-lg hover:shadow-xl">
                     <Send className="w-4 h-4 mr-2" />
-                    Kirim Pesan
+                    {submitting ? 'Mengirim...' : 'Kirim Pesan'}
                   </Button>
                 </form>
               </div>

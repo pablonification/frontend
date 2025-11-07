@@ -24,6 +24,10 @@ export const metadata: Metadata = {
   description: 'Website resmi Laboratorium Kimia Dasar Institut Teknologi Bandung',
   keywords: 'kimia dasar, praktikum, ITB, laboratorium, kimia',
   authors: [{ name: 'Lab Kimia Dasar ITB' }],
+  icons: {
+    icon: '/logo_itb.png',
+    apple: '/logo_itb.png',
+  },
   openGraph: {
     title: 'Lab Kimia Dasar ITB',
     description: 'Website resmi Laboratorium Kimia Dasar Institut Teknologi Bandung',

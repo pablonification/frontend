@@ -254,7 +254,7 @@ export default function Header() {
                 className="sm:hidden px-4 py-3 text-sm bg-primary-500 text-white rounded-xl hover:bg-primary-600 transition-all duration-300 text-center font-medium"
                 onClick={handleNavigation}
               >
-                Admin
+                Login
               </Link>
             </nav>
           </div>

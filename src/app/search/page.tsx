@@ -20,8 +20,16 @@ export default function SearchPage() {
   const [error, setError] = useState<string | null>(null)
 
   const handleSearch = async (query: string) => {
-    if (!query.trim()) {
+    const trimmed = query.trim()
+    if (!trimmed) {
       setSearchResults([])
+      setError(null)
+      return
+    }
+
+    if (trimmed.length < 2) {
+      setSearchResults([])
+      setError('Masukkan minimal 2 karakter untuk melakukan pencarian')
       return
     }
 
@@ -30,9 +38,15 @@ export default function SearchPage() {
     
     try {
       // Make real API call to search
+      const mapTabToType = (tab: string) => {
+        if (tab === 'announcements') return 'announcement'
+        if (tab === 'modules') return 'module'
+        return tab
+      }
+
       const response = await api.getWithQuery<SearchResult[]>(endpoints.search.global, {
-        q: query,
-        type: activeTab === 'all' ? undefined : activeTab
+        q: trimmed,
+        type: activeTab === 'all' ? undefined : mapTabToType(activeTab)
       })
       
       setSearchResults(response.data || [])
@@ -124,6 +138,9 @@ export default function SearchPage() {
                     className="w-full pl-16 pr-6 py-5 text-xl border border-neutral-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white shadow-sm"
                   />
                 </div>
+                {error && (
+                  <p className="mt-3 text-sm text-red-600 text-center">{error}</p>
+                )}
               </div>
             </div>
           </div>
@@ -196,7 +213,7 @@ export default function SearchPage() {
                                   <a href={result.url} className="group">
                                     {result.title}
                                     <span className="block text-sm text-primary-600 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                      Baca selengkapnya →
+                                      Baca selengkapnya ?
                                     </span>
                                   </a>
                                 </h3>
@@ -244,8 +261,6 @@ export default function SearchPage() {
           </div>
         </section>
       </main>
-      
-      <Footer />
     </div>
   )
 }
