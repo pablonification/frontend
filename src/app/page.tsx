@@ -128,7 +128,7 @@ export default function HomePage() {
     },
     {
       title: "Jadwal Praktikum",
-      description: "Cek sesi dan ruangan Anda secara *real-time*.",
+      description: "Cek sesi dan ruangan Anda secara real-time.",
       icon: Calendar,
       href: "/praktikum#jadwal",
       color: "bg-teal-600", // Hijau terang
