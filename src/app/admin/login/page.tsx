@@ -218,18 +218,6 @@ Solusi:
               {loading ? 'Memproses...' : 'Masuk'}
             </Button>
           </form>
-
-          <div className="mt-6 p-4 bg-neutral-50 rounded-lg">
-            <p className="text-sm text-neutral-600 mb-2">
-              <strong>Demo Credentials:</strong>
-            </p>
-            <p className="text-sm text-neutral-500">
-              Email: admin@labkimia.ac.id
-            </p>
-            <p className="text-sm text-neutral-500">
-              Password: admin123
-            </p>
-          </div>
         </Card>
       </div>
     </div>
