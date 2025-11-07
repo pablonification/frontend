@@ -98,13 +98,21 @@ async function proxyRequest(
     })
     
     // Make request to backend
-    const response = await fetch(backendUrl, {
+    const fetchOptions: RequestInit = {
       method,
       headers,
-      body,
       // @ts-ignore - signal might not be available in all environments
       signal: request.signal,
-    })
+    }
+    
+    // Add body and duplex option for streaming requests (like file uploads)
+    if (body !== undefined) {
+      fetchOptions.body = body
+      // @ts-ignore - duplex is required for streaming bodies in Node.js
+      fetchOptions.duplex = 'half'
+    }
+    
+    const response = await fetch(backendUrl, fetchOptions)
     
     // Get response data
     const responseHeaders = new Headers()
