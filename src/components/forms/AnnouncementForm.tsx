@@ -206,75 +206,7 @@ export default function AnnouncementForm({
         </label>
       </div>
 
-      {/* Attachments */}
-      <div>
-        <label className="block text-sm font-medium text-neutral-700 mb-1">
-          Lampiran (Opsional)
-        </label>
-        
-        {/* File Upload Area */}
-        <div className="border-2 border-dashed border-neutral-300 rounded-lg p-4 text-center">
-          <input
-            type="file"
-            id="attachments"
-            multiple
-            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png,.gif"
-            onChange={(e) => {
-              if (e.target.files) {
-                handleFileSelect(Array.from(e.target.files))
-              }
-            }}
-            className="hidden"
-            disabled={loading}
-          />
-          <label
-            htmlFor="attachments"
-            className="cursor-pointer flex flex-col items-center"
-          >
-            <Upload className="w-8 h-8 text-neutral-400 mb-2" />
-            <span className="text-sm text-neutral-600">
-              Klik untuk upload atau drag & drop
-            </span>
-            <span className="text-xs text-neutral-500 mt-1">
-              PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, JPG, PNG, GIF (Maks 10MB per file)
-            </span>
-          </label>
-        </div>
 
-        {/* File List */}
-        {formData.attachments.length > 0 && (
-          <div className="mt-3 space-y-2">
-            {formData.attachments.map((file, index) => (
-              <div key={index} className="flex items-center justify-between p-2 bg-neutral-50 rounded-lg">
-                <div className="flex items-center space-x-2">
-                  <FileText className="w-4 h-4 text-neutral-500" />
-                  <span className="text-sm text-neutral-700 truncate max-w-xs">
-                    {file.name}
-                  </span>
-                  <span className="text-xs text-neutral-500">
-                    ({(file.size / 1024 / 1024).toFixed(2)} MB)
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveFile(index)}
-                  className="text-red-500 hover:text-red-700"
-                  disabled={loading}
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {getFieldError('attachments') && (
-          <p className="mt-1 text-sm text-red-600 flex items-center">
-            <AlertCircle className="w-4 h-4 mr-1" />
-            {getFieldError('attachments') as string}
-          </p>
-        )}
-      </div>
 
       {/* Actions */}
       <div className="flex justify-end space-x-3 pt-4 border-t border-neutral-100">

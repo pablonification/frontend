@@ -160,34 +160,6 @@ export default async function AnnouncementDetailPage({ params }: PageProps) {
                     {announcement.content}
                   </div>
                 </div>
-                
-                {announcement.attachments.length > 0 && (
-                  <div className="mt-8 pt-6 border-t border-neutral-200">
-                    <h3 className="text-lg font-semibold text-neutral-900 mb-4">
-                      Lampiran
-                    </h3>
-                    <div className="space-y-3">
-                      {announcement.attachments.map((attachment, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between p-4 bg-neutral-50 rounded-lg"
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-primary-100 rounded flex items-center justify-center">
-                              <Download className="w-4 h-4 text-primary-600" />
-                            </div>
-                            <span className="font-medium text-neutral-900">
-                              {attachment}
-                            </span>
-                          </div>
-                          <button className="btn-primary text-sm px-4 py-2">
-                            Download
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </article>
             </div>
           </div>

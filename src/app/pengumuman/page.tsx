@@ -171,18 +171,6 @@ export default function PengumumanPage() {
                       {announcement.excerpt}
                     </p>
                     
-                    {announcement.attachments.length > 0 && (
-                      <div className="mb-6">
-                        <h4 className="text-sm font-medium text-neutral-700 mb-3">Lampiran:</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {announcement.attachments.map((attachment, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {attachment}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                     
                     <div className="flex items-center justify-between">
                       {/* <div className="text-sm text-neutral-500 font-medium">
