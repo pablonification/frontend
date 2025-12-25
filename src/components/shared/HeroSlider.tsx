@@ -19,7 +19,7 @@ const sliderData: SliderItem[] = [
     id: 1,
     title: 'Selamat Datang di Lab Kimia Dasar',
     description: 'Temukan informasi praktikum, modul, dan pengumuman terbaru dari Laboratorium Kimia Dasar',
-    image: '/images/hero-1.jpg',
+    image: '/tolongdong-1.jpg',
     alt: 'Laboratorium Kimia Dasar',
     link: '/about'
   },
@@ -27,7 +27,7 @@ const sliderData: SliderItem[] = [
     id: 2,
     title: 'Praktikum Kimia Dasar',
     description: 'Akses modul praktikum, jadwal, dan pembagian kelompok untuk semester ini',
-    image: '/images/hero-2.jpg',
+    image: '/tolongdong-2.jpg',
     alt: 'Praktikum Kimia',
     link: '/praktikum'
   },
@@ -35,7 +35,7 @@ const sliderData: SliderItem[] = [
     id: 3,
     title: 'Pengumuman Terbaru',
     description: 'Informasi terkini tentang praktikum, jadwal, dan hal penting lainnya',
-    image: '/images/hero-3.jpg',
+    image: '/tolongdong-3.jpg',
     alt: 'Pengumuman Lab',
     link: '/pengumuman'
   }
