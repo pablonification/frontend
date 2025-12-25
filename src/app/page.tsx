@@ -278,7 +278,7 @@ export default function HomePage() {
               {/* Image container with fade transition - only images fade */}
               <div className="absolute inset-0 rounded-3xl overflow-hidden" style={{ zIndex: 1 }}>
                 {(sliders.length > 0 ? sliders : fallbackSliders).map((slider, index) => {
-                  const imageSrc = slider.image_path || fallbackSliders[index]?.image_path || '/slideshow-1.jpeg';
+                  const imageSrc = fallbackSliders[index]?.image_path || '/tolongdong-1.jpg';
                   const isActive = index === currentSlide;
                   const wasPrevious = index === previousSlide;
                   
